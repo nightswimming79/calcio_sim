@@ -1,0 +1,118 @@
+@if (report().totaleElementi > 0) {
+<div class="report-card">
+    <div class="report-header">
+        <h2>Report Statistiche</h2>
+        <span class="badge-total">Campioni: {{ report().totaleElementi }}</span>
+    </div>
+
+    <!-- NUMERI -->
+    @if (report().numeri | keyvalue; as campiNumerici) {
+    @if (campiNumerici.length > 0) {
+    <div class="section">
+        <h3 class="section-title">📊 Metriche Numeriche</h3>
+        <div class="grid-container">
+            @for (campo of campiNumerici; track campo.key) {
+            <div class="metric-card">
+                <!-- TITOLO E TARGET IN RIGA DEDICATA SOTTO -->
+                <div class="metric-header">
+                    <span class="metric-label">{{ campo.key }}</span>
+                    @if (getTargetLabel(campo.key); as targetText) {
+                    <div class="target-row">
+                        <span class="target-badge">{{ targetText }}</span>
+                    </div>
+                    }
+                </div>
+
+                <div class="metric-values">
+                    <div class="metric-box">
+                        <span class="val-title">MIN</span>
+                        <span class="val-number">{{ campo.value.min }}</span>
+                    </div>
+
+                    <!-- MEDIA -->
+                    <div class="metric-box highlight" [ngClass]="{
+                            'out-of-target': hasTarget(campo.key) && isOutOfTarget(campo.key, campo.value.media),
+                            'in-target': hasTarget(campo.key) && !isOutOfTarget(campo.key, campo.value.media)
+                        }">
+                        <span class="val-title">MEDIA</span>
+                        <span class="val-number">{{ campo.value.media }}</span>
+                    </div>
+
+                    <div class="metric-box">
+                        <span class="val-title">MAX</span>
+                        <span class="val-number">{{ campo.value.max }}</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="val-title">TOT</span>
+                        <span class="val-number">{{ campo.value.tot.toFixed(2) }}</span>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+    }
+
+    <!-- BOOLEANI -->
+    @if (report().booleani | keyvalue; as campiBooleani) {
+    @if (campiBooleani.length > 0) {
+    <div class="section">
+        <h3 class="section-title">☑️ Esiti Booleani</h3>
+        <div class="grid-container">
+            @for (campo of campiBooleani; track campo.key) {
+            <div class="bool-card">
+                <span class="metric-label">{{ campo.key }}</span>
+                <div class="bool-values">
+                    <div class="bool-box true-box">
+                        <span class="val-title">True</span>
+                        <span class="val-number">{{ campo.value.trueCount }}</span>
+                        <span class="val-perc">({{ campo.value.truePercentuale }})</span>
+                    </div>
+                    <div class="bool-box false-box">
+                        <span class="val-title">False</span>
+                        <span class="val-number">{{ campo.value.falseCount }}</span>
+                        <span class="val-perc">({{ campo.value.falsePercentuale }})</span>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+    }
+
+    <!-- TESTI -->
+    @if (report().testi | keyvalue; as campiTestuali) {
+    @if (campiTestuali.length > 0) {
+    <div class="section">
+        <h3 class="section-title">📈 Frequenze e Distribuzione</h3>
+        <div class="grid-container">
+            @for (campo of campiTestuali; track campo.key) {
+            <div class="text-card">
+                <span class="metric-label">{{ campo.key }}</span>
+                <ul class="freq-list">
+                    @for (occ of campo.value.conteggio | keyvalue; track occ.key) {
+                    <li class="freq-item">
+                        <div class="freq-info">
+                            <span class="freq-key">{{ occ.key }}</span>
+                            <span class="freq-count">{{ occ.value }}x ({{ campo.value.percentuale[occ.key] }})</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" [style.width]="campo.value.percentuale[occ.key]"></div>
+                        </div>
+                    </li>
+                    }
+                </ul>
+            </div>
+            }
+        </div>
+    </div>
+    }
+    }
+</div>
+} @else {
+<div class="empty-state">
+    <p>Nessun dato disponibile da mostrare nel report.</p>
+</div>
+}

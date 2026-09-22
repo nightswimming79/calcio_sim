@@ -1,0 +1,192 @@
+<div class="sim-container">
+    <h2>Simulatore Sequenza di Gioco</h2>
+
+    <div class="card balance-card">
+        <h3>Bilanciamento Forza Squadre</h3>
+        <div class="form-group">
+            <label>
+                Squadra A ({{ balanceValue }}) vs Squadra B ({{ 100 - balanceValue }})
+            </label>
+            <input type="range" min="0" max="100" [ngModel]="balanceValue" (ngModelChange)="onBalanceChange($event)" />
+        </div>
+    </div>
+
+    <div class="panels-grid">
+        <div class="card team-card">
+            <h3>Squadra A</h3>
+
+            <div class="form-group">
+                <label>Centrocampo: {{ inputData.teamA.midfield }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.midfield" />
+            </div>
+            <div class="form-group">
+                <label>Regia / Creatività: {{ inputData.teamA.playmaking }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.playmaking" />
+            </div>
+            <div class="form-group">
+                <label>Attacco / Movimento: {{ inputData.teamA.attack }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.attack" />
+            </div>
+            <div class="form-group">
+                <label>Difesa: {{ inputData.teamA.defense }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.defense" />
+            </div>
+            <div class="form-group">
+                <label>Pressing: {{ inputData.teamA.pressing }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.pressing" />
+            </div>
+            <div class="form-group">
+                <label>Portiere: {{ inputData.teamA.goalkeeper }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.goalkeeper" />
+            </div>
+            <div class="form-group">
+                <label>Pericolosità Corner: {{ inputData.teamA.cornerAttack }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.cornerAttack" />
+            </div>
+            <div class="form-group">
+                <label>Difesa Corner: {{ inputData.teamA.cornerDefense }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.cornerDefense" />
+            </div>
+
+            <hr />
+            <h4>Assetto Tattico Squadra A</h4>
+            <div class="form-group">
+                <label>Verticalità: {{ inputData.playstyleA.verticality }}</label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.playstyleA.verticality" />
+            </div>
+            <div class="form-group">
+                <label>Altezza Difesa: {{ inputData.playstyleA.defensiveLine }}</label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.playstyleA.defensiveLine" />
+            </div>
+        </div>
+
+        <div class="card team-card">
+            <h3>Squadra B</h3>
+
+            <div class="form-group">
+                <label>Centrocampo: {{ inputData.teamB.midfield }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.midfield" />
+            </div>
+            <div class="form-group">
+                <label>Regia / Creatività: {{ inputData.teamB.playmaking }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.playmaking" />
+            </div>
+            <div class="form-group">
+                <label>Attacco / Movimento: {{ inputData.teamB.attack }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.attack" />
+            </div>
+            <div class="form-group">
+                <label>Difesa: {{ inputData.teamB.defense }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.defense" />
+            </div>
+            <div class="form-group">
+                <label>Pressing: {{ inputData.teamB.pressing }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.pressing" />
+            </div>
+            <div class="form-group">
+                <label>Portiere: {{ inputData.teamB.goalkeeper }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.goalkeeper" />
+            </div>
+            <div class="form-group">
+                <label>Pericolosità Corner: {{ inputData.teamB.cornerAttack }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.cornerAttack" />
+            </div>
+            <div class="form-group">
+                <label>Difesa Corner: {{ inputData.teamB.cornerDefense }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.cornerDefense" />
+            </div>
+
+            <hr />
+            <h4>Assetto Tattico Squadra B</h4>
+            <div class="form-group">
+                <label>Verticalità: {{ inputData.playstyleB.verticality }}</label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.playstyleB.verticality" />
+            </div>
+            <div class="form-group">
+                <label>Altezza Difesa: {{ inputData.playstyleB.defensiveLine }}</label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.playstyleB.defensiveLine" />
+            </div>
+        </div>
+    </div>
+
+    <div class="action-bar">
+        <div class="possession-selector">
+            <label>Possesso Iniziale:</label>
+            <select [(ngModel)]="inputData.startingPossession">
+                <option value="A">Squadra A</option>
+                <option value="B">Squadra B</option>
+            </select>
+        </div>
+
+        <button class="btn-simula" (click)="onSimulateSequence()">
+            SIMULA SEQUENZE (18.640 ITERAZIONI)
+        </button>
+    </div>
+
+    <app-stats [results]="results" [targets]="expectedTargets"></app-stats>
+
+    <div class="results-container" *ngIf="results && results.length > 0">
+        <h3>Esito Sequenze Simulate (Prime 10 Mostrate di {{ results.length }})</h3>
+
+        <div class="card output-card" *ngFor="let seq of results.slice(0, 10); let i = index">
+            <div class="seq-header">
+                <h4>Sequenza #{{ i + 1 }} ({{ seq.totalActions }} Azioni)</h4>
+                <span class="badge">Contropiedi Totali: {{ seq.sequenceDetails.counterAttacksCount }}</span>
+            </div>
+
+            <div class="team-results-grid">
+                <div class="team-stats-card">
+                    <h5>Squadra A (Gol: {{ seq.statsA.goals }})</h5>
+                    <ul>
+                        <li>
+                            <span>Possesso Palla:</span>
+                            <strong>{{ seq.statsA.possessionSharePercent }}%</strong>
+                        </li>
+                        <li>
+                            <span>xG Azione Manovrata:</span>
+                            <strong>{{ seq.statsA.xgByState.openPlay }}</strong>
+                        </li>
+                        <li>
+                            <span>xG Contropiede:</span>
+                            <strong>{{ seq.statsA.xgByState.counterAttack }}</strong>
+                        </li>
+                        <li>
+                            <span>xG Corner:</span>
+                            <strong>{{ seq.statsA.xgByState.corner }}</strong>
+                        </li>
+                        <li class="total-xg">
+                            <span>xG Totali:</span>
+                            <strong>{{ seq.statsA.totalXG }}</strong>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="team-stats-card">
+                    <h5>Squadra B (Gol: {{ seq.statsB.goals }})</h5>
+                    <ul>
+                        <li>
+                            <span>Possesso Palla:</span>
+                            <strong>{{ seq.statsB.possessionSharePercent }}%</strong>
+                        </li>
+                        <li>
+                            <span>xG Azione Manovrata:</span>
+                            <strong>{{ seq.statsB.xgByState.openPlay }}</strong>
+                        </li>
+                        <li>
+                            <span>xG Contropiede:</span>
+                            <strong>{{ seq.statsB.xgByState.counterAttack }}</strong>
+                        </li>
+                        <li>
+                            <span>xG Corner:</span>
+                            <strong>{{ seq.statsB.xgByState.corner }}</strong>
+                        </li>
+                        <li class="total-xg">
+                            <span>xG Totali:</span>
+                            <strong>{{ seq.statsB.totalXG }}</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,125 @@
+<div class="sim-container">
+  <h2>Simulatore Azione di Gioco</h2>
+
+  <div class="panels-grid">
+    <!-- PANNELLO INPUT: ATTACCO -->
+    <div class="card attack-card">
+      <h3>Squadra in Attacco</h3>
+
+      <div class="form-group">
+        <label>Centrocampo (0-100): {{ inputData.attackingTeam.midfield }}</label>
+        <input type="range" min="0" max="100" [(ngModel)]="inputData.attackingTeam.midfield" />
+      </div>
+
+      <div class="form-group">
+        <label>Regia / Creatività (0-100): {{ inputData.attackingTeam.playmaking }}</label>
+        <input type="range" min="0" max="100" [(ngModel)]="inputData.attackingTeam.playmaking" />
+      </div>
+
+      <div class="form-group">
+        <label>Attacco / Movimento (0-100): {{ inputData.attackingTeam.attack }}</label>
+        <input type="range" min="0" max="100" [(ngModel)]="inputData.attackingTeam.attack" />
+      </div>
+
+      <div class="form-group">
+        <label>Difesa (0-100): {{ inputData.attackingTeam.defense }}</label>
+        <input type="range" min="0" max="100" [(ngModel)]="inputData.attackingTeam.defense" />
+      </div>
+
+      <div class="form-group">
+        <label>Pressing (0-100): {{ inputData.attackingTeam.pressing }}</label>
+        <input type="range" min="0" max="100" [(ngModel)]="inputData.attackingTeam.pressing" />
+      </div>
+    </div>
+
+    <!-- PANNELLO INPUT: DIFESA -->
+    <div class="card defense-card">
+      <h3>Squadra in Difesa</h3>
+
+      <div class="form-group">
+        <label>Centrocampo (0-100): {{ inputData.defendingTeam.midfield }}</label>
+        <input type="range" min="0" max="100" [(ngModel)]="inputData.defendingTeam.midfield" />
+      </div>
+
+      <div class="form-group">
+        <label>Regia / Creatività (0-100): {{ inputData.defendingTeam.playmaking }}</label>
+        <input type="range" min="0" max="100" [(ngModel)]="inputData.defendingTeam.playmaking" />
+      </div>
+
+      <div class="form-group">
+        <label>Attacco / Movimento (0-100): {{ inputData.defendingTeam.attack }}</label>
+        <input type="range" min="0" max="100" [(ngModel)]="inputData.defendingTeam.attack" />
+      </div>
+
+      <div class="form-group">
+        <label>Difesa (0-100): {{ inputData.defendingTeam.defense }}</label>
+        <input type="range" min="0" max="100" [(ngModel)]="inputData.defendingTeam.defense" />
+      </div>
+
+      <div class="form-group">
+        <label>Pressing (0-100): {{ inputData.defendingTeam.pressing }}</label>
+        <input type="range" min="0" max="100" [(ngModel)]="inputData.defendingTeam.pressing" />
+      </div>
+    </div>
+
+    <!-- PANNELLO INPUT: STILE DI GIOCO -->
+    <div class="card style-card">
+      <h3>Assetto Tattico</h3>
+
+      <div class="form-group">
+        <label>Verticalità Attacco (0.0 Tiki-taka / 1.0 Diretto): {{ inputData.playstyle!.verticality }}</label>
+        <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.playstyle!.verticality" />
+      </div>
+
+      <div class="form-group">
+        <label>Altezza Difesa (0.0 Blocco Basso / 1.0 Pressing Alto): {{ inputData.playstyle!.defensiveLine }}</label>
+        <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.playstyle!.defensiveLine" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTION BUTTON -->
+  <div class="action-bar">
+    <button class="btn-simula" (click)="onSimulate()">SIMULA AZIONE</button>
+  </div>
+  <app-stats [results]="results"></app-stats>
+  <!-- PANNELLO OUTPUT (Visualizzato dopo il click) -->
+  <div class="card output-card" *ngFor="let result of results">
+    <h3>Esito Simulazione</h3>
+
+    <div class="results-grid">
+      <!-- BOX ESITO A 3 STATI -->
+      <div class="result-box" [ngClass]="result.outcome">
+        <span class="label">Esito Azione</span>
+        <span class="value">
+          <ng-container [ngSwitch]="result.outcome">
+            <span *ngSwitchCase="'CHANCE_CREATED'">OCCASIONE CREATA</span>
+            <span *ngSwitchCase="'POSSESSION_RETAINED'">POSSESSO MANTENUTO</span>
+            <span *ngSwitchCase="'POSSESSION_LOST'">PALLA PERSA</span>
+          </ng-container>
+        </span>
+      </div>
+
+      <div class="result-box">
+        <span class="label">Expected Goals (xG)</span>
+        <span class="value highlight">{{ result.xG > 0 ? result.xG : '-' }}</span>
+      </div>
+
+      <div class="result-box">
+        <span class="label">Qualità Passaggio</span>
+        <span class="value">{{ (result.completionProbability * 100).toFixed(0) }}%</span>
+      </div>
+
+      <div class="result-box">
+        <span class="label">Rischio Contropiede Subito</span>
+        <span class="value">{{ result.outcome === 'POSSESSION_LOST' ? (result.counterAttackRisk * 100).toFixed(0) + '%'
+          : '-' }}</span>
+      </div>
+
+      <div class="result-box">
+        <span class="label">Palla Recuperata Alta</span>
+        <span class="value">{{ result.highRecovery ? 'SÌ (Pericolo)' : 'NO' }}</span>
+      </div>
+    </div>
+  </div>
+</div>

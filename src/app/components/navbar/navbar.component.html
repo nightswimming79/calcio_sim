@@ -1,0 +1,51 @@
+<nav class="navbar">
+    <div class="navbar-brand">
+        <a routerLink="/">⚽ Calcio Sim</a>
+    </div>
+
+    <ul class="navbar-menu">
+        <li class="dropdown" (mouseleave)="closeDropdown()">
+            <button class="dropdown-btn" (click)="toggleDropdown()">
+                Simulazioni <span class="arrow">▼</span>
+            </button>
+
+            <ul class="dropdown-menu" [class.show]="isDropdownOpen">
+                <li>
+                    <a routerLink="/sim-azione" routerLinkActive="active" (click)="closeDropdown()">
+                        Sim Azione
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/sim-tiro" routerLinkActive="active" (click)="closeDropdown()">
+                        Sim Tiro
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/sim-contropiede" routerLinkActive="active" (click)="closeDropdown()">
+                        Sim Contropiede
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/sim-azione-full" routerLinkActive="active" (click)="closeDropdown()">
+                        Sim Azione Completa
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/sim-sequenza" routerLinkActive="active" (click)="closeDropdown()">
+                        Sim Sequenza
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/sim-corner" routerLinkActive="active" (click)="closeDropdown()">
+                        Sim Corner
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/sim-loose-ball" routerLinkActive="active" (click)="closeDropdown()">
+                        Sim Palla Contesa
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>

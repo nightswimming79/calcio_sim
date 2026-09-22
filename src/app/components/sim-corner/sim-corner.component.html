@@ -1,0 +1,84 @@
+<div class="sim-container">
+    <h2>Simulatore Calcio d'Angolo (Corner)</h2>
+
+    <div class="panels-grid">
+        <!-- INPUT: I 3 ATTORI DEL CORNER -->
+        <div class="card actors-card">
+            <h3>Contesto e Duello Aereo</h3>
+
+            <div class="form-group">
+                <label>
+                    Attacco - Stacco / Colpo di Testa (0.0 - 1.0): {{ inputData.attackerAerial }}
+                </label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.attackerAerial" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Difesa - Marcatura Aerea / Fisicità (0.0 - 1.0): {{ inputData.defenderAerial }}
+                </label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.defenderAerial" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Portiere - Uscita Alta / Dominio Area (0.0 - 1.0): {{ inputData.goalkeeperExit }}
+                </label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.goalkeeperExit" />
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTION BUTTON -->
+    <div class="action-bar">
+        <button class="btn-simula" (click)="onSimulateCorner()">
+            SIMULA 1.000 CALCI D'ANGOLO
+        </button>
+    </div>
+
+    <!-- COMPONENTE TABELLA/ANALISI STATISTICHE -->
+    <app-stats [results]="results"></app-stats>
+
+    <!-- SEZIONE OUTPUT: VISUALIZZAZIONE SCHEDE DEI CORNER SIMULATI -->
+    <div class="results-container" *ngIf="results && results.length > 0">
+        <h3>Prime 10 Simulazioni (su {{ results.length }})</h3>
+
+        <div class="card output-card" *ngFor="let result of results.slice(0, 10); let i = index">
+            <div class="seq-header">
+                <h4>Corner #{{ i + 1 }}</h4>
+                <span class="badge" [ngClass]="result.outcome">{{ result.outcome }}</span>
+            </div>
+
+            <div class="results-grid">
+                <div class="result-box">
+                    <span class="label">Esito Dettagliato</span>
+                    <span class="value">
+                        <ng-container [ngSwitch]="result.outcome">
+                            <span *ngSwitchCase="'CORNER_SHOT'">Tiro / Colpo di Testa</span>
+                            <span *ngSwitchCase="'CORNER_CLEARED_LOOSE'">Respinta Corta (2ª Palla)</span>
+                            <span *ngSwitchCase="'CORNER_COUNTER_ATTACK'">Contropiede Avversario</span>
+                            <span *ngSwitchCase="'CORNER_HELD'">Presa Portiere / Rinvio</span>
+                        </ng-container>
+                    </span>
+                </div>
+
+                <div class="result-box">
+                    <span class="label">Prossimo Stato Possesso</span>
+                    <span class="value highlight">
+                        <ng-container [ngSwitch]="result.nextState">
+                            <span *ngSwitchCase="'SHOT'">Conclusione a Rete</span>
+                            <span *ngSwitchCase="'LOOSE_BALL'">Palla Contesa</span>
+                            <span *ngSwitchCase="'COUNTER_ATTACK'">Transizione / Contropiede</span>
+                            <span *ngSwitchCase="'OPPONENT_POSSESSION'">Palla Difesa / Portiere</span>
+                        </ng-container>
+                    </span>
+                </div>
+
+                <div class="result-box" *ngIf="result.generatedBaseXG !== undefined">
+                    <span class="label">xG Base Generato</span>
+                    <span class="value highlight">{{ result.generatedBaseXG }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

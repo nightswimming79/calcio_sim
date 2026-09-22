@@ -1,0 +1,147 @@
+<div class="sim-container">
+    <h2>Simulatore Azione di Gioco Completa (Possesso + Contropiede)</h2>
+
+    <div class="panels-grid">
+        <!-- PANNELLO INPUT: SQUADRA A -->
+        <div class="card team-card">
+            <h3>Squadra A</h3>
+
+            <div class="form-group">
+                <label>Centrocampo (0-100): {{ inputData.teamA.midfield }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.midfield" />
+            </div>
+
+            <div class="form-group">
+                <label>Regia / Creatività (0-100): {{ inputData.teamA.playmaking }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.playmaking" />
+            </div>
+
+            <div class="form-group">
+                <label>Attacco / Movimento (0-100): {{ inputData.teamA.attack }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.attack" />
+            </div>
+
+            <div class="form-group">
+                <label>Difesa (0-100): {{ inputData.teamA.defense }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.defense" />
+            </div>
+
+            <div class="form-group">
+                <label>Pressing (0-100): {{ inputData.teamA.pressing }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamA.pressing" />
+            </div>
+
+            <hr />
+            <h4>Assetto Tattico Squadra A</h4>
+            <div class="form-group">
+                <label>Verticalità: {{ inputData.playstyleA.verticality }}</label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.playstyleA.verticality" />
+            </div>
+
+            <div class="form-group">
+                <label>Altezza Difesa: {{ inputData.playstyleA.defensiveLine }}</label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.playstyleA.defensiveLine" />
+            </div>
+        </div>
+
+        <!-- PANNELLO INPUT: SQUADRA B -->
+        <div class="card team-card">
+            <h3>Squadra B</h3>
+
+            <div class="form-group">
+                <label>Centrocampo (0-100): {{ inputData.teamB.midfield }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.midfield" />
+            </div>
+
+            <div class="form-group">
+                <label>Regia / Creatività (0-100): {{ inputData.teamB.playmaking }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.playmaking" />
+            </div>
+
+            <div class="form-group">
+                <label>Attacco / Movimento (0-100): {{ inputData.teamB.attack }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.attack" />
+            </div>
+
+            <div class="form-group">
+                <label>Difesa (0-100): {{ inputData.teamB.defense }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.defense" />
+            </div>
+
+            <div class="form-group">
+                <label>Pressing (0-100): {{ inputData.teamB.pressing }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.teamB.pressing" />
+            </div>
+
+            <hr />
+            <h4>Assetto Tattico Squadra B</h4>
+            <div class="form-group">
+                <label>Verticalità: {{ inputData.playstyleB.verticality }}</label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.playstyleB.verticality" />
+            </div>
+
+            <div class="form-group">
+                <label>Altezza Difesa: {{ inputData.playstyleB.defensiveLine }}</label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.playstyleB.defensiveLine" />
+            </div>
+        </div>
+    </div>
+
+    <!-- SELEZIONE POSSESSO INIZIALE + AZIONE -->
+    <div class="action-bar">
+        <div class="possession-selector">
+            <label>Possesso Palla Iniziale:</label>
+            <select [(ngModel)]="inputData.startingPossession">
+                <option value="A">Squadra A</option>
+                <option value="B">Squadra B</option>
+            </select>
+        </div>
+
+        <button class="btn-simula" (click)="onSimulateFull()">SIMULA AZIONE COMPLETA</button>
+    </div>
+
+    <!-- COMPONENTE AGGREGATORE STATISTICHE (Opzionale) -->
+    <app-stats [results]="results"></app-stats>
+
+    <!-- PANNELLO OUTPUT RISULTATI -->
+    <div class="card output-card" *ngFor="let result of results">
+        <h3>Esito Singolo Ciclo di Gioco</h3>
+
+        <div class="results-grid">
+            <!-- ESITO FINALE SINTETICO -->
+            <div class="result-box" [ngClass]="result.outcome">
+                <span class="label">Esito Azione</span>
+                <span class="value">
+                    <ng-container [ngSwitch]="result.outcome">
+                        <span *ngSwitchCase="'CHANCE_CREATED'">OCCASIONE DA AZIONE</span>
+                        <span *ngSwitchCase="'COUNTER_CHANCE_CREATED'">OCCASIONE DA CONTROPIEDE</span>
+                        <span *ngSwitchCase="'COUNTER_FAILED'">CONTROPIEDE SFUMATO</span>
+                        <span *ngSwitchCase="'POSSESSION_RETAINED'">POSSESSO MANTENUTO</span>
+                    </ng-container>
+                </span>
+            </div>
+
+            <!-- SQUADRA CHE DETIENE IL PALLONE A FINE AZIONE -->
+            <div class="result-box">
+                <span class="label">Possesso Palla Finale</span>
+                <span class="value highlight">Squadra {{ result.currentPossession }}</span>
+            </div>
+
+            <!-- xG SQUADRA A -->
+            <div class="result-box">
+                <span class="label">xG Squadra A</span>
+                <span class="value" [class.highlight]="result.xgTeamA > 0">
+                    {{ result.xgTeamA > 0 ? result.xgTeamA : '-' }}
+                </span>
+            </div>
+
+            <!-- xG SQUADRA B -->
+            <div class="result-box">
+                <span class="label">xG Squadra B</span>
+                <span class="value" [class.highlight]="result.xgTeamB > 0">
+                    {{ result.xgTeamB > 0 ? result.xgTeamB : '-' }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

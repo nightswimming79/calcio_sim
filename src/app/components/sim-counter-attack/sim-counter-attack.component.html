@@ -1,0 +1,87 @@
+<div class="sim-container">
+    <h2>Simulatore Ripartenza / Contropiede</h2>
+
+    <div class="panels-grid">
+        <!-- INPUT: SQUADRA CHE RIPARTE (Attaccante in contropiede) -->
+        <div class="card attack-card">
+            <h3>Squadra in Ripartenza</h3>
+
+            <div class="form-group">
+                <label>Attacco / Velocità Punte (0-100): {{ inputData.attackingTeam.attack }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.attackingTeam.attack" />
+            </div>
+
+            <div class="form-group">
+                <label>Regia / Qualità Filtrante (0-100): {{ inputData.attackingTeam.playmaking }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.attackingTeam.playmaking" />
+            </div>
+
+            <div class="form-group">
+                <label>Centrocampo / Supporto (0-100): {{ inputData.attackingTeam.midfield }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.attackingTeam.midfield" />
+            </div>
+        </div>
+
+        <!-- INPUT: SQUADRA SBILANCIATA (In ripiegamento) -->
+        <div class="card defense-card">
+            <h3>Squadra Sbilanciata (In Ripiegamento)</h3>
+
+            <div class="form-group">
+                <label>Qualità Difensiva / Contrasto (0-100): {{ inputData.defendingTeam.defense }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.defendingTeam.defense" />
+            </div>
+
+            <div class="form-group">
+                <label>Filtro Centrocampo (0-100): {{ inputData.defendingTeam.midfield }}</label>
+                <input type="range" min="0" max="100" [(ngModel)]="inputData.defendingTeam.midfield" />
+            </div>
+        </div>
+
+        <!-- INPUT: CONDIZIONI DEL CONTROPIEDE -->
+        <div class="card context-card">
+            <h3>Condizioni di Ripartenza</h3>
+
+            <div class="form-group">
+                <label>Rischio Ereditato / Sbilanciamento (0.0 - 1.0): {{ inputData.counterAttackRisk }}</label>
+                <input type="range" min="0.1" max="1.0" step="0.05" [(ngModel)]="inputData.counterAttackRisk" />
+            </div>
+
+            <div class="form-group checkbox-group">
+                <label for="highRecoveryCheck">Palla Recuperata Alta (Trequarti)</label>
+                <input id="highRecoveryCheck" type="checkbox" [(ngModel)]="inputData.highRecovery" />
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTION BUTTON -->
+    <div class="action-bar">
+        <button class="btn-simula" (click)="onSimulateCounterAttack()">SIMULA CONTROPIEDE</button>
+    </div>
+
+
+    <app-stats [results]="results"></app-stats>
+    <!-- PANNELLO OUTPUT -->
+    <div class="card output-card" *ngFor="let result of results">
+        <h3>Esito Ripartenza</h3>
+
+        <div class="results-grid">
+            <!-- BOX ESITO -->
+            <div class="result-box" [ngClass]="result.outcome">
+                <span class="label">Esito Contropiede</span>
+                <span class="value">
+                    {{ result.outcome === 'COUNTER_CHANCE_CREATED' ? 'OCCASIONE CREATA!' : 'CONTROPIEDE SFUMATO' }}
+                </span>
+            </div>
+
+            <div class="result-box">
+                <span class="label">Expected Goals (xG)</span>
+                <span class="value highlight">{{ result.xG > 0 ? result.xG : '-' }}</span>
+            </div>
+
+            <div class="result-box">
+                <span class="label">Probabilità Arrivo al Tiro</span>
+                <span class="value">{{ (result.breakthroughProbability * 100).toFixed(0) }}%</span>
+            </div>
+        </div>
+    </div>
+</div>

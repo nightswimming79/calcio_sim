@@ -1,0 +1,80 @@
+<div class="sim-container">
+    <h2>Simulatore Palla Contesa / Seconda Palla</h2>
+
+    <div class="panels-grid">
+        <div class="card actors-card">
+            <h3>Duello sulla Seconda Palla</h3>
+
+            <div class="form-group">
+                <label>
+                    Attacco - Reattività / Pressing (0.0 - 1.0): {{ inputData.attackerReactivity }}
+                </label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.attackerReactivity" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Difesa - Posizionamento / Fisicità (0.0 - 1.0): {{ inputData.defenderReactivity }}
+                </label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.defenderReactivity" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Altezza Linea Difensiva (Rischio Ripartenza): {{ inputData.defensiveLine }}
+                </label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.defensiveLine" />
+            </div>
+        </div>
+    </div>
+
+    <div class="action-bar">
+        <button class="btn-simula" (click)="onSimulateLooseBall()">
+            SIMULA 1.000 PALLE CONTESE
+        </button>
+    </div>
+
+    <app-stats [results]="results"></app-stats>
+
+    <div class="results-container" *ngIf="results && results.length > 0">
+        <h3>Prime 10 Simulazioni (su {{ results.length }})</h3>
+
+        <div class="card output-card" *ngFor="let result of results.slice(0, 10); let i = index">
+            <div class="seq-header">
+                <h4>Duello #{{ i + 1 }}</h4>
+                <span class="badge" [ngClass]="result.outcome">{{ result.outcome }}</span>
+            </div>
+
+            <div class="results-grid">
+                <div class="result-box">
+                    <span class="label">Esito Dettagliato</span>
+                    <span class="value">
+                        <ng-container [ngSwitch]="result.outcome">
+                            <span *ngSwitchCase="'REBOUND_SHOT'">Tap-in / Tiro Immediato</span>
+                            <span *ngSwitchCase="'ATTACK_RETAINED'">Possesso Mantenuto (Attacco)</span>
+                            <span *ngSwitchCase="'DEFENSE_CLEARED_LONG'">Lancio Lungo / Contropiede</span>
+                            <span *ngSwitchCase="'DEFENSE_RECOVERED'">Recupero Pulito Difesa</span>
+                        </ng-container>
+                    </span>
+                </div>
+
+                <div class="result-box">
+                    <span class="label">Prossimo Stato Possesso</span>
+                    <span class="value highlight">
+                        <ng-container [ngSwitch]="result.nextState">
+                            <span *ngSwitchCase="'SHOT'">Conclusione a Rete</span>
+                            <span *ngSwitchCase="'POSSESSION_RETAINED'">Ricircolo Palla Attacco</span>
+                            <span *ngSwitchCase="'COUNTER_ATTACK'">Transizione Avversaria</span>
+                            <span *ngSwitchCase="'OPPONENT_POSSESSION'">Palla Difesa / Portiere</span>
+                        </ng-container>
+                    </span>
+                </div>
+
+                <div class="result-box" *ngIf="result.generatedBaseXG !== undefined">
+                    <span class="label">xG Base Generato</span>
+                    <span class="value highlight">{{ result.generatedBaseXG }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

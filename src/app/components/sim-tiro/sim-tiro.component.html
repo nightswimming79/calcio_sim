@@ -1,0 +1,103 @@
+<div class="sim-container">
+    <h2>Simulatore Conclusione / Tiro</h2>
+
+    <div class="panels-grid">
+        <!-- INPUT: BASE XG -->
+        <div class="card base-card">
+            <h3>Qualità Azione di Partenza</h3>
+            <div class="form-group">
+                <label>xG Base (0.01 - 0.99): {{ inputData.baseXG }}</label>
+                <input type="range" min="0.01" max="0.99" step="0.01" [(ngModel)]="inputData.baseXG" />
+            </div>
+        </div>
+
+        <!-- INPUT: I 3 ATTORI -->
+        <div class="card actors-card">
+            <h3>Contesto della Conclusione</h3>
+
+            <div class="form-group">
+                <label>
+                    Attaccante (0.0 Scarso/Sbilanciato - 1.0 Fuoriclasse/Piede forte): {{ inputData.attacker }}
+                </label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.attacker" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Difesa (0.0 Nessuna pressione - 1.0 Muro/Opposizione totale): {{ inputData.defender }}
+                </label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.defender" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Portiere (0.0 Fuori causa/Coperto - 1.0 Piazzamento perfetto): {{ inputData.goalkeeper }}
+                </label>
+                <input type="range" min="0" max="1" step="0.05" [(ngModel)]="inputData.goalkeeper" />
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTION BUTTON -->
+    <div class="action-bar">
+        <button class="btn-simula" (click)="onSimulateShot()">CALCOLA TIRO</button>
+    </div>
+
+    <app-stats [results]="results"></app-stats>
+
+    <!-- PANNELLO OUTPUT (Visualizzato dopo il click) -->
+    <div class="card output-card" *ngFor="let result of results">
+        <h3>Esito Tiro</h3>
+
+        <div class="results-grid">
+            <!-- BOX ESITO MULTI-STATO -->
+            <div class="result-box" [ngClass]="result.outcome">
+                <span class="label">Esito Conclusione</span>
+                <span class="value">
+                    <ng-container [ngSwitch]="result.outcome">
+                        <span *ngSwitchCase="'GOAL'">GOL!</span>
+                        <span *ngSwitchCase="'SAVED_HELD'">PARATO (BLOCCATO)</span>
+                        <span *ngSwitchCase="'SAVED_CORNER'">PARATO (ANGOLO)</span>
+                        <span *ngSwitchCase="'SAVED_REBOUND'">RESPINTA CORTA</span>
+                        <span *ngSwitchCase="'BLOCKED'">TIRO MURATO</span>
+                        <span *ngSwitchCase="'POST_BAR_REBOUND'">PALO / TRAVERSA</span>
+                        <span *ngSwitchCase="'OUT'">FUORI</span>
+                    </ng-container>
+                </span>
+            </div>
+
+            <!-- PROSSIMO STATO POSSESSO -->
+            <div class="result-box">
+                <span class="label">Evoluzione Possesso</span>
+                <span class="value">
+                    <ng-container [ngSwitch]="result.nextState">
+                        <span *ngSwitchCase="'OPPONENT_POSSESSION'">Palla agli Avversari</span>
+                        <span *ngSwitchCase="'CORNER'">Calcio d'Angolo</span>
+                        <span *ngSwitchCase="'LOOSE_BALL'">Palla Contesa</span>
+                    </ng-container>
+                </span>
+            </div>
+
+            <div class="result-box">
+                <span class="label">xG Finale (P_gol)</span>
+                <span class="value highlight">{{ result.finalXG }}</span>
+            </div>
+
+            <div class="result-box">
+                <span class="label">Probabilità Calcolata</span>
+                <span class="value">{{ (result.finalXG * 100).toFixed(1) }}%</span>
+            </div>
+        </div>
+
+        <!-- DETTAGLIO MODIFICATORI LOGISTICI -->
+        <div class="modifiers-detail">
+            <h4>Dettaglio Modificatori Logit:</h4>
+            <ul>
+                <li>Impatto Attaccante: <strong>{{ result.modifiers.attackerBonus > 0 ? '+' : '' }}{{
+                        result.modifiers.attackerBonus }}</strong></li>
+                <li>Impatto Difesa: <strong>{{ result.modifiers.defenderPenalty }}</strong></li>
+                <li>Impatto Portiere: <strong>{{ result.modifiers.goalkeeperPenalty }}</strong></li>
+            </ul>
+        </div>
+    </div>
+</div>

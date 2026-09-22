@@ -1,0 +1,88 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1e293b;
+    padding: 0 24px;
+    height: 60px;
+    color: white;
+    font-family: system-ui, -apple-system, sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-brand a {
+    color: #38bdf8;
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.navbar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-btn {
+    background: transparent;
+    border: none;
+    color: #f8fafc;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 10px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.dropdown-btn:hover {
+    background-color: #334155;
+}
+
+.arrow {
+    font-size: 0.75rem;
+    transition: transform 0.2s;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #334155;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    list-style: none;
+    padding: 8px 0;
+    margin-top: 4px;
+    z-index: 100;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-menu li a {
+    color: #f8fafc;
+    padding: 10px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 0.95rem;
+    transition: background-color 0.2s;
+}
+
+.dropdown-menu li a:hover,
+.dropdown-menu li a.active {
+    background-color: #475569;
+    color: #38bdf8;
+}
