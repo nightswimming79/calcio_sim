@@ -32,7 +32,7 @@ export class SimAzioneFullComponent {
 
   onSimulateFull(): void {
 
-    this.results = this.simAzioneService.iterate((p) => this.simAzioneService.simulateFullAction(p), 18640, this.inputData);
+    // this.results = this.simAzioneService.iterate((p) => this.simAzioneService.simulateFullAction(p), 18640, this.inputData);
 
   }
 }

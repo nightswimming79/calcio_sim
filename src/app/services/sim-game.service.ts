@@ -5,6 +5,7 @@ import {
   GameSequenceResult,
   TeamSequenceStats
 } from '../sim-game.model';
+import { SIM_CONFIG } from '../config/sim-config.const';
 
 @Injectable({
   providedIn: 'root'
@@ -13,13 +14,6 @@ export class SimGameService {
 
   constructor(private simAzioneService: SimAzioneService) { }
 
-  /**
-   * Simula una sequenza partita divisa in DUE TEMPI da N azioni ciascuno:
-   * - Primo Tempo (N azioni): Inizia la Squadra A
-   * - Secondo Tempo (N azioni): Inizia la Squadra B
-   * 
-   * In totale vengono simulate N * 2 azioni per sequenza.
-   */
   public simulateSequence(input: GameSequenceInput, N: number): GameSequenceResult {
     let counterAttacksCount = 0;
     let cornersCount = 0;
@@ -32,48 +26,21 @@ export class SimGameService {
     const onLooseBall = () => looseBallsCount++;
     const onCounter = () => counterAttacksCount++;
 
-    // 1. PRIMO TEMPO (N Azioni) - Calcio d'inizio alla Squadra A
-    this.runHalfTime(
-      N,
-      'A',
-      input,
-      statsA,
-      statsB,
-      onCorner,
-      onLooseBall,
-      onCounter
-    );
+    // PRIMO TEMPO
+    this.runHalfTime(N, 'A', input, statsA, statsB, onCorner, onLooseBall, onCounter);
 
-    // 2. SECONDO TEMPO (N Azioni) - Calcio d'inizio alla Squadra B
-    this.runHalfTime(
-      N,
-      'B',
-      input,
-      statsA,
-      statsB,
-      onCorner,
-      onLooseBall,
-      onCounter
-    );
+    // SECONDO TEMPO
+    this.runHalfTime(N, 'B', input, statsA, statsB, onCorner, onLooseBall, onCounter);
 
-    // 3. RIFINITURA FINALE E CALCOLO METRICHE AGGREGATE
     this.finalizeTeamStats(statsA, statsB);
 
     return {
       totalActions: N * 2,
-      sequenceDetails: {
-        counterAttacksCount,
-        cornersCount,
-        looseBallsCount
-      },
+      sequenceDetails: { counterAttacksCount, cornersCount, looseBallsCount },
       statsA,
       statsB
     };
   }
-
-  // =========================================================================
-  // HELPER PRIVATI
-  // =========================================================================
 
   private runHalfTime(
     N: number,
@@ -99,7 +66,6 @@ export class SimGameService {
       const currentStatsAtt = attackingTeam === 'A' ? statsA : statsB;
       const currentStatsDef = defendingTeam === 'A' ? statsA : statsB;
 
-      // FASE DI POSSESSO ORDINARIA / MANOVRA
       const possessionResult = this.simAzioneService.simulatePossession({
         attackingTeam: attTeamData,
         defendingTeam: defTeamData,
@@ -113,11 +79,12 @@ export class SimGameService {
 
       switch (possessionResult.outcome) {
         case 'CHANCE_CREATED': {
+          const cfgShot = SIM_CONFIG.SHOT;
           const shotResult = this.simAzioneService.calculateShotXG({
-            baseXG: possessionResult.generatedBaseXG ?? possessionResult.xG ?? 0.20,
-            attacker: attTeamData.attack / 100,
-            defender: (defTeamData.defense * 0.7 + defTeamData.pressing * 0.3) / 100,
-            goalkeeper: defTeamData.goalkeeper / 100
+            baseXG: possessionResult.generatedBaseXG ?? possessionResult.xG ?? SIM_CONFIG.POSSESSION.DEFAULT_OPEN_PLAY_XG,
+            attacker: attTeamData.attack / cfgShot.STAT_DIVISOR,
+            defender: (defTeamData.defense * cfgShot.DEFENDER_WEIGHT_DEFENSE + defTeamData.pressing * cfgShot.DEFENDER_WEIGHT_PRESSING) / cfgShot.STAT_DIVISOR,
+            goalkeeper: defTeamData.goalkeeper / cfgShot.STAT_DIVISOR
           });
 
           this.recordShot(currentStatsAtt, shotResult, 'openPlay');
@@ -154,11 +121,12 @@ export class SimGameService {
           currentStatsDef.passesByState.total += counterPasses;
 
           if (counterResult.outcome === 'COUNTER_SHOT' || counterResult.outcome === 'COUNTER_CHANCE_CREATED') {
+            const cfgShot = SIM_CONFIG.SHOT;
             const shotResult = this.simAzioneService.calculateShotXG({
-              baseXG: counterResult.generatedBaseXG ?? counterResult.xG ?? 0.30,
-              attacker: defTeamData.attack / 100,
-              defender: (attTeamData.defense * 0.7 + attTeamData.pressing * 0.3) / 100,
-              goalkeeper: attTeamData.goalkeeper / 100
+              baseXG: counterResult.generatedBaseXG ?? counterResult.xG ?? SIM_CONFIG.COUNTER_ATTACK.DEFAULT_COUNTER_XG,
+              attacker: defTeamData.attack / cfgShot.STAT_DIVISOR,
+              defender: (attTeamData.defense * cfgShot.DEFENDER_WEIGHT_DEFENSE + attTeamData.pressing * cfgShot.DEFENDER_WEIGHT_PRESSING) / cfgShot.STAT_DIVISOR,
+              goalkeeper: attTeamData.goalkeeper / cfgShot.STAT_DIVISOR
             });
 
             this.recordShot(currentStatsDef, shotResult, 'counterAttack');
@@ -228,7 +196,6 @@ export class SimGameService {
   ): 'A' | 'B' {
 
     const currentStatsAtt = attackingTeam === 'A' ? statsA : statsB;
-
     const attTeamData = attackingTeam === 'A' ? input.teamA : input.teamB;
     const defTeamData = defendingTeam === 'A' ? input.teamA : input.teamB;
 
@@ -236,22 +203,22 @@ export class SimGameService {
       onCorner();
       currentStatsAtt.cornersWon++;
 
+      const cfgCorner = SIM_CONFIG.CORNER;
       const cornerResult = this.simAzioneService.simulateCorner({
-        attackerAerial: (attTeamData.attack * 0.4 + attTeamData.cornerAttack * 0.6) / 100,
-        defenderAerial: (defTeamData.defense * 0.4 + defTeamData.cornerDefense * 0.6) / 100,
-        goalkeeperExit: defTeamData.goalkeeper / 100
+        attackerAerial: (attTeamData.attack * cfgCorner.ATTACKER_AERIAL_WEIGHT + attTeamData.cornerAttack * cfgCorner.CORNER_ATTACK_WEIGHT) / SIM_CONFIG.SHOT.STAT_DIVISOR,
+        defenderAerial: (defTeamData.defense * cfgCorner.DEFENDER_AERIAL_WEIGHT + defTeamData.cornerDefense * cfgCorner.CORNER_DEFENSE_WEIGHT) / SIM_CONFIG.SHOT.STAT_DIVISOR,
+        goalkeeperExit: defTeamData.goalkeeper / SIM_CONFIG.SHOT.STAT_DIVISOR
       });
 
-      // Tracciamento del passaggio / traiettoria da piazzato
-      currentStatsAtt.passesByState.corner += 1;
-      currentStatsAtt.passesByState.total += 1;
+      currentStatsAtt.passesByState.corner += cfgCorner.PASSES_COUNT;
+      currentStatsAtt.passesByState.total += cfgCorner.PASSES_COUNT;
 
       if (cornerResult.outcome === 'CORNER_SHOT') {
         const cornerShotResult = this.simAzioneService.calculateShotXG({
-          baseXG: cornerResult.generatedBaseXG ?? 0.12,
-          attacker: attTeamData.attack / 100,
-          defender: defTeamData.cornerDefense / 100,
-          goalkeeper: defTeamData.goalkeeper / 100
+          baseXG: cornerResult.generatedBaseXG ?? cfgCorner.DEFAULT_CORNER_XG,
+          attacker: attTeamData.attack / SIM_CONFIG.SHOT.STAT_DIVISOR,
+          defender: defTeamData.cornerDefense / SIM_CONFIG.SHOT.STAT_DIVISOR,
+          goalkeeper: defTeamData.goalkeeper / SIM_CONFIG.SHOT.STAT_DIVISOR
         });
 
         this.recordShot(currentStatsAtt, cornerShotResult, 'corner');
@@ -271,7 +238,6 @@ export class SimGameService {
 
     return defendingTeam;
   }
-
   private resolveLooseBall(
     attackingTeam: 'A' | 'B',
     defendingTeam: 'A' | 'B',
@@ -290,52 +256,42 @@ export class SimGameService {
     const defTeamData = defendingTeam === 'A' ? input.teamA : input.teamB;
     const defPlaystyle = defendingTeam === 'A' ? input.playstyleA : input.playstyleB;
 
+    const cfgLB = SIM_CONFIG.LOOSE_BALL;
     const looseResult = this.simAzioneService.simulateLooseBall({
-      attackerReactivity: (attTeamData.pressing * 0.6 + attTeamData.attack * 0.4) / 100,
-      defenderReactivity: (defTeamData.defense * 0.6 + defTeamData.pressing * 0.4) / 100,
+      attackerReactivity: (attTeamData.pressing * cfgLB.ATTACKER_PRESSING_WEIGHT + attTeamData.attack * cfgLB.ATTACKER_ATTACK_WEIGHT) / SIM_CONFIG.SHOT.STAT_DIVISOR,
+      defenderReactivity: (defTeamData.defense * cfgLB.DEFENDER_DEFENSE_WEIGHT + defTeamData.pressing * cfgLB.DEFENDER_PRESSING_WEIGHT) / SIM_CONFIG.SHOT.STAT_DIVISOR,
       defensiveLine: defPlaystyle.defensiveLine
     });
 
     if (looseResult.outcome === 'REBOUND_SHOT') {
       currentStatsAtt.looseBallsWon++;
-
-      // Tracciamento del passaggio / sponda vincente sulla palla contesa
-      currentStatsAtt.passesByState.looseBall += 1;
-      currentStatsAtt.passesByState.total += 1;
+      currentStatsAtt.passesByState.looseBall += cfgLB.PASSES_COUNT;
+      currentStatsAtt.passesByState.total += cfgLB.PASSES_COUNT;
 
       const reboundShotResult = this.simAzioneService.calculateShotXG({
-        baseXG: looseResult.generatedBaseXG ?? 0.25,
-        attacker: attTeamData.attack / 100,
-        defender: defTeamData.defense / 100,
-        goalkeeper: defTeamData.goalkeeper / 100
+        baseXG: looseResult.generatedBaseXG ?? cfgLB.DEFAULT_REBOUND_XG,
+        attacker: attTeamData.attack / SIM_CONFIG.SHOT.STAT_DIVISOR,
+        defender: defTeamData.defense / SIM_CONFIG.SHOT.STAT_DIVISOR,
+        goalkeeper: defTeamData.goalkeeper / SIM_CONFIG.SHOT.STAT_DIVISOR
       });
 
       this.recordShot(currentStatsAtt, reboundShotResult, 'looseBall');
       return defendingTeam;
     } else if (looseResult.outcome === 'ATTACK_RETAINED') {
       currentStatsAtt.looseBallsWon++;
-
-      // L'attacco ricontrolla palla: viene conteggiato il passaggio di controllo
-      currentStatsAtt.passesByState.looseBall += 1;
-      currentStatsAtt.passesByState.total += 1;
-
+      currentStatsAtt.passesByState.looseBall += cfgLB.PASSES_COUNT;
+      currentStatsAtt.passesByState.total += cfgLB.PASSES_COUNT;
       return attackingTeam;
     } else if (looseResult.outcome === 'DEFENSE_CLEARED_LONG') {
       currentStatsDef.looseBallsWon++;
-
-      // La difesa spazza/rilancia: passaggio contato alla difesa
-      currentStatsDef.passesByState.looseBall += 1;
-      currentStatsDef.passesByState.total += 1;
-
+      currentStatsDef.passesByState.looseBall += cfgLB.PASSES_COUNT;
+      currentStatsDef.passesByState.total += cfgLB.PASSES_COUNT;
       onCounter();
       return defendingTeam;
     } else {
       currentStatsDef.looseBallsWon++;
-
-      // La difesa ricontrolla pulito
-      currentStatsDef.passesByState.looseBall += 1;
-      currentStatsDef.passesByState.total += 1;
-
+      currentStatsDef.passesByState.looseBall += cfgLB.PASSES_COUNT;
+      currentStatsDef.passesByState.total += cfgLB.PASSES_COUNT;
       return defendingTeam;
     }
   }
