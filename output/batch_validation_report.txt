@@ -1,0 +1,23 @@
+REPORT VALIDAZIONE BATCH - 2026-09-26T10:00:17.058Z
+
+Criterio 1: Baseline Nominale di Controllo (0, 50, 50, 50, 50)    --> [ OK ]
+   └─ Dettaglio: xG A: 1.65, Tiri A: 9.93, Passaggi A: 146.3
+
+Criterio 2: Convergenza Globale della Media a SR=0                --> [ OK ]
+   └─ Dettaglio: Media xG A: 1.62, Media xG B: 1.62
+
+Criterio 3: Simmetria Speculare A vs B a SR=0                     --> [ OK ]
+   └─ Dettaglio: Differenza Delta xG A vs B: 0.0017
+
+Criterio 4: Trade-Off Rischio/Rendimento Linea Difensiva Alta     --> [ OK ]
+   └─ Dettaglio: Resa Offensiva: +0.54 xG, Rischio Concesso: +0.22 xG
+
+Criterio 5: Contrazione Passaggi all'aumentare della Verticalità  --> [ OK ]
+   └─ Dettaglio: Passaggi a Vert 0: 179.3, Passaggi a Vert 100: 111.2 (Delta: -68.1)
+
+Criterio 6: Gradiente di Reattività Non Saturante (0-50 vs 50-100) --> [ OK ]
+   └─ Dettaglio: Delta Step 0->50: 32.7 passaggi, Delta Step 50->100: 35.4 passaggi
+
+Criterio 7: Sensibilità all'Incrocio Tattico (Contropiede in Campo Aperto) --> [ OK ]
+   └─ Dettaglio: xG Contropiede su Difesa Bassa: 0.36, su Difesa Alta: 0.56
+

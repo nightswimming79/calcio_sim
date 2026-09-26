@@ -7,13 +7,16 @@ export const SIM_CONFIG = {
 
         BREAKTHROUGH_BASE: 0.18,
         BREAKTHROUGH_V_WEIGHT: 0.35,
-        BREAKTHROUGH_VD_WEIGHT: 0.20,
+        BREAKTHROUGH_VD_WEIGHT: 0.42, // Aumentato (da 0.20): amplifica il premio d'attacco per chi tiene la linea alta
+
         BREAKTHROUGH_MIN: 0.10,
         BREAKTHROUGH_MAX: 0.85,
 
         COUNTER_RISK_V_WEIGHT: 0.11,
-        COUNTER_RISK_D_WEIGHT: 0.07,
-        COUNTER_RISK_MULTIPLIER: 2.0,
+        COUNTER_RISK_D_WEIGHT: 0.15, // Aumentato (da 0.07): incrementa lo sbilanciamento di chi perde palla con linea alta
+        COUNTER_RISK_D_DEFENDER_WEIGHT: 0.65, // Aumentato (da 0.30): inasprisce la vulnerabilità della difesa alta in campo aperto
+
+        COUNTER_RISK_MULTIPLIER: 1.0,
 
         DEFAULT_OPEN_PLAY_XG: 0.16,
         HIGH_RECOVERY_DEFENSIVE_LINE_THRESHOLD: 0.60
@@ -60,10 +63,10 @@ export const SIM_CONFIG = {
     // --- SOGLIE ESITI TIRO NON-GOL (CUMULATIVE) ---
     SHOT_OUTCOMES: {
         BLOCKED_THRESHOLD: 0.35,      // <= 0.35: BLOCKED -> LOOSE_BALL
-        SAVED_CORNER_THRESHOLD: 0.58, // Riportato a 0.58 per riportare CornersCount > 2.5 e CornerXG > 0.10
+        SAVED_CORNER_THRESHOLD: 0.58, // Mantiene CornersCount > 2.5 e CornerXG > 0.10
         SAVED_REBOUND_THRESHOLD: 0.74,// <= 0.74: SAVED_REBOUND -> LOOSE_BALL
         SAVED_HELD_THRESHOLD: 0.76,   // <= 0.76: SAVED_HELD -> OPPONENT_POSSESSION
-        POST_BAR_THRESHOLD: 0.82     // <= 0.82: POST_BAR_REBOUND -> LOOSE_BALL (spinge LooseBallsCount sopra 10)
-        // >  0.82: OUT -> OPPONENT_POSSESSION
+        POST_BAR_THRESHOLD: 0.82      // <= 0.82: POST_BAR_REBOUND -> LOOSE_BALL
+        // > 0.82: OUT -> OPPONENT_POSSESSION
     }
 };

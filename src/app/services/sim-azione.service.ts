@@ -40,17 +40,24 @@ export class SimAzioneService {
   private clamp(value: number, min: number, max: number): number {
     return Math.max(min, Math.min(max, value));
   }
-
   /**
-   * Simula la singola azione manovrata / possesso ordinario.
-   */
+     * Simula la singola azione manovrata / possesso ordinario.
+     */
   public simulatePossession(input: SimulationInput): ActionSimulationResult {
     const attackingTeam = input.attackingTeam;
     const defendingTeam = input.defendingTeam;
-    const playstyle = input.attackingPlaystyle ?? input.playstyle ?? { verticality: 0.5, defensiveLine: 0.5 };
 
-    const v = this.clamp(playstyle.verticality, 0, 1);
-    const d = this.clamp(playstyle.defensiveLine, 0, 1);
+    // Recupero dello stile dell'attaccante e del difensore con fallback difensivi sicuri
+    const attackingPlaystyle = input.attackingPlaystyle ?? input.playstyle ?? { verticality: 0.5, defensiveLine: 0.5 };
+    const defendingPlaystyle = input.defendingPlaystyle ?? { verticality: 0.5, defensiveLine: 0.5 };
+
+    // Atteggiamenti dell'attaccante (chi ha la palla)
+    const v = this.clamp(attackingPlaystyle.verticality, 0, 1);
+    const d = this.clamp(attackingPlaystyle.defensiveLine, 0, 1);
+
+    // Atteggiamenti del difensore (chi difende / pressa)
+    const v_def = this.clamp(defendingPlaystyle.verticality, 0, 1);
+    const d_def = this.clamp(defendingPlaystyle.defensiveLine, 0, 1);
 
     // Stima dei passaggi completati nella manovra usando i parametri di configurazione
     const cfgP = SIM_CONFIG.POSSESSION;
@@ -63,8 +70,18 @@ export class SimAzioneService {
 
     // ESITO 1: PALLA PERSA / RISCHIO CONTROPIEDE
     if (roll > completionProbability) {
-      const isHighRecovery = d > cfgP.HIGH_RECOVERY_DEFENSIVE_LINE_THRESHOLD;
-      const counterRisk = this.clamp((v * cfgP.COUNTER_RISK_V_WEIGHT + d * cfgP.COUNTER_RISK_D_WEIGHT) * cfgP.COUNTER_RISK_MULTIPLIER, 0, 1);
+      // Un recupero alto (pressione/pressing alto) avviene se la linea del DIFENSORE è sopra la soglia
+      const isHighRecovery = d_def > cfgP.HIGH_RECOVERY_DEFENSIVE_LINE_THRESHOLD;
+
+      // Il rischio contropiede dipende da:
+      // 1. Sbilanciamento di chi attacca (v, d dell'attaccante)
+      // 2. Aggressività/Linea alta di chi recupera (d_def del difensore)
+      const defenderWeight = cfgP.COUNTER_RISK_D_DEFENDER_WEIGHT ?? 0.3;
+      const counterRisk = this.clamp(
+        (v * cfgP.COUNTER_RISK_V_WEIGHT + d * cfgP.COUNTER_RISK_D_WEIGHT + d_def * defenderWeight) * cfgP.COUNTER_RISK_MULTIPLIER,
+        0,
+        1
+      );
 
       return {
         outcome: 'COUNTER_ATTACK_RISK',
@@ -109,25 +126,37 @@ export class SimAzioneService {
       passesCompleted
     };
   }
-
   /**
    * Simula la ripartenza in contropiede.
    */
   public simulateCounterAttack(input: CounterAttackInput): CounterAttackResult {
     const cfgC = SIM_CONFIG.COUNTER_ATTACK;
     const risk = this.clamp(input.counterAttackRisk ?? 0.5, 0.1, 1.0);
-    const passesCompleted = Math.floor(this.clamp(2 + risk * 2, cfgC.PASSES_MIN, cfgC.PASSES_MAX));
+
+    // Recuperiamo la linea difensiva di chi subisce il contropiede (se presente nell'input)
+    const d_defender = this.clamp(input.defendingPlaystyle?.defensiveLine ?? 0.5, 0, 1);
+
+    const passesCompleted = Math.floor(
+      this.clamp(2 + risk * 2, cfgC.PASSES_MIN, cfgC.PASSES_MAX)
+    );
 
     const roll = Math.random();
-    const isShot = roll < (cfgC.BREAKTHROUGH_BASE + risk * 0.4);
+    // La probabilità di andare al tiro sale con il rischio e con la linea alta avversaria
+    const breakthroughProb = cfgC.BREAKTHROUGH_BASE + risk * 0.4 + d_defender * 0.1;
+    const isShot = roll < breakthroughProb;
 
     if (isShot) {
-      const generatedXG = Number((cfgC.DEFAULT_COUNTER_XG * (0.8 + risk * 0.5)).toFixed(2));
+      // Moltiplicatore di campo aperto: più la difesa subente è alta (d_defender), più l'xG è elevato
+      const lineMultiplier = 0.85 + d_defender * 0.3; // da 0.85 (linea 0) a 1.15 (linea 100)
+      const generatedXG = Number(
+        (cfgC.DEFAULT_COUNTER_XG * (0.8 + risk * 0.5) * lineMultiplier).toFixed(2)
+      );
+
       return {
         outcome: 'COUNTER_SHOT',
         xG: generatedXG,
         generatedBaseXG: generatedXG,
-        breakthroughProbability: Number(risk.toFixed(2)),
+        breakthroughProbability: Number(this.clamp(breakthroughProb, 0, 1).toFixed(2)),
         passesCompleted
       };
     }
@@ -135,11 +164,10 @@ export class SimAzioneService {
     return {
       outcome: 'COUNTER_FAILED',
       xG: -1,
-      breakthroughProbability: Number(risk.toFixed(2)),
+      breakthroughProbability: Number(this.clamp(breakthroughProb, 0, 1).toFixed(2)),
       passesCompleted
     };
   }
-
   /**
    * Calcola l'xG finale e l'esito specifico del tiro attingendo le soglie direttamente da SIM_CONFIG.
    */
