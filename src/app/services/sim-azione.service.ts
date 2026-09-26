@@ -9,7 +9,8 @@ import {
   CornerInput,
   CornerResult,
   LooseBallInput,
-  LooseBallResult
+  LooseBallResult,
+  TeamStats
 } from '../sim.model';
 import { SIM_CONFIG } from '../config/sim-config.const';
 
@@ -47,35 +48,36 @@ export class SimAzioneService {
     const attackingTeam = input.attackingTeam;
     const defendingTeam = input.defendingTeam;
 
-    // Recupero dello stile dell'attaccante e del difensore con fallback difensivi sicuri
     const attackingPlaystyle = input.attackingPlaystyle ?? input.playstyle ?? { verticality: 0.5, defensiveLine: 0.5 };
     const defendingPlaystyle = input.defendingPlaystyle ?? { verticality: 0.5, defensiveLine: 0.5 };
 
-    // Atteggiamenti dell'attaccante (chi ha la palla)
     const v = this.clamp(attackingPlaystyle.verticality, 0, 1);
     const d = this.clamp(attackingPlaystyle.defensiveLine, 0, 1);
-
-    // Atteggiamenti del difensore (chi difende / pressa)
-    const v_def = this.clamp(defendingPlaystyle.verticality, 0, 1);
     const d_def = this.clamp(defendingPlaystyle.defensiveLine, 0, 1);
 
-    // Stima dei passaggi completati nella manovra usando i parametri di configurazione
     const cfgP = SIM_CONFIG.POSSESSION;
-    const passesCompleted = Math.floor(
-      this.clamp(cfgP.BASE_PASSES_MAX - v * cfgP.PASSES_VERTICALITY_WEIGHT, cfgP.BASE_PASSES_MIN, cfgP.BASE_PASSES_MAX)
-    );
+
+    // --- CALCOLO PASSAGGI BASATO DIRETTAMENTE SU MIDFIELD VS PRESSING ---
+    const basePasses = cfgP.BASE_PASSES_MAX - v * cfgP.PASSES_VERTICALITY_WEIGHT;
+
+    // Se il centrocampo dell'attaccante domina sul pressing avversario, la squadra consolida il possesso.
+    // Se le due squadre si equivalgono (es. 80 vs 80), il rapporto vale 1.0 (nessuna alterazione al valore base).
+    const controlRatio = (attackingTeam.midfield + attackingTeam.playmaking) /
+      (defendingTeam.pressing + defendingTeam.defense);
+
+    // Moltiplicatore fluido e continuo basato unicamente sul rapporto di controllo del campo
+    const strengthPassMultiplier = this.clamp(controlRatio, 0.4, 1.8);
+
+    // NOTA: niente Math.floor per evitare gradini e salti di possesso nelle simulazioni
+    const passesCompleted = basePasses * strengthPassMultiplier;
 
     const completionProbability = this.calculateCompletionProbability(attackingTeam, defendingTeam, v, d);
     const roll = Math.random();
 
     // ESITO 1: PALLA PERSA / RISCHIO CONTROPIEDE
     if (roll > completionProbability) {
-      // Un recupero alto (pressione/pressing alto) avviene se la linea del DIFENSORE è sopra la soglia
       const isHighRecovery = d_def > cfgP.HIGH_RECOVERY_DEFENSIVE_LINE_THRESHOLD;
 
-      // Il rischio contropiede dipende da:
-      // 1. Sbilanciamento di chi attacca (v, d dell'attaccante)
-      // 2. Aggressività/Linea alta di chi recupera (d_def del difensore)
       const defenderWeight = cfgP.COUNTER_RISK_D_DEFENDER_WEIGHT ?? 0.3;
       const counterRisk = this.clamp(
         (v * cfgP.COUNTER_RISK_V_WEIGHT + d * cfgP.COUNTER_RISK_D_WEIGHT + d_def * defenderWeight) * cfgP.COUNTER_RISK_MULTIPLIER,
@@ -89,7 +91,7 @@ export class SimAzioneService {
         counterAttackRisk: Number(counterRisk.toFixed(2)),
         highRecovery: isHighRecovery,
         completionProbability: Number(completionProbability.toFixed(2)),
-        passesCompleted
+        passesCompleted: Math.round(passesCompleted)
       };
     }
 
@@ -112,7 +114,7 @@ export class SimAzioneService {
         counterAttackRisk: -1,
         highRecovery: false,
         completionProbability: Number(completionProbability.toFixed(2)),
-        passesCompleted
+        passesCompleted: Math.round(passesCompleted)
       };
     }
 
@@ -123,9 +125,10 @@ export class SimAzioneService {
       counterAttackRisk: -1,
       highRecovery: false,
       completionProbability: Number(completionProbability.toFixed(2)),
-      passesCompleted
+      passesCompleted: Math.round(passesCompleted)
     };
   }
+
   /**
    * Simula la ripartenza in contropiede.
    */
@@ -274,12 +277,18 @@ export class SimAzioneService {
 
   // --- HELPER PRIVATI DI CALCOLO ---
 
-  private calculateCompletionProbability(att: any, def: any, v: number, d: number): number {
-    const attPower = att.midfield * 0.4 + att.playmaking * 0.6;
-    const defPower = def.defense * 0.5 + def.pressing * 0.5;
-    const baseProb = 0.70 + (attPower - defPower) / 200;
-    return this.clamp(baseProb - v * 0.15 + d * 0.05, 0.40, 0.95);
+  private calculateCompletionProbability(att: TeamStats, def: TeamStats, v: number, d: number): number {
+    // Potenziale di palleggio dell'attacco vs Capacità di pressione/intercetto della difesa
+    const buildUpQuality = att.playmaking * 0.6 + att.midfield * 0.4;
+    const defensivePressure = def.pressing * 0.6 + def.defense * 0.4;
+
+    // Scontro diretto tra gli attributi (senza variabili sintetiche)
+    // A parità di attributi (es. 80 vs 80), (buildUpQuality - defensivePressure) = 0 -> baseProb = 0.70
+    const baseProb = 0.70 + (buildUpQuality - defensivePressure) / 100;
+
+    return this.clamp(baseProb - v * 0.15 + d * 0.05, 0.30, 0.95);
   }
+
 
   private calculateGeneratedXG(att: any, def: any, v: number, d: number): number {
     const attQual = att.attack * 0.6 + att.playmaking * 0.4;

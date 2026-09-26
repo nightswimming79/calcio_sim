@@ -37,7 +37,7 @@ import { SimGameService } from '../src/app/services/sim-game.service';
 const ITERATIONS_PER_SCENARIO = 1000;
 
 const RANGES = {
-    strengthRatio: { min: -15, max: 15, step: 1 },  // Delta da -15 a +15 (31 valori)
+    strengthRatio: { min: -15, max: 50, step: 1 },  // Delta da -15 a +15 (31 valori)
     attackA: { min: 0, max: 100, step: 50 },  // 0, 50, 100
     defenseA: { min: 0, max: 100, step: 50 },  // 0, 50, 100
     attackB: { min: 0, max: 100, step: 50 },  // 0, 50, 100

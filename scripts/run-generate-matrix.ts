@@ -24,12 +24,42 @@ interface TierRange {
 }
 
 const TIERS: TierRange[] = [
-    { tierName: 'Top Premier', possMin: 48, possMax: 52, xgAMin: 1.40, xgAMax: 1.80, xgBMin: 1.40, xgBMax: 1.80 },
-    { tierName: 'Zona Champions', possMin: 55, possMax: 60, xgAMin: 1.80, xgAMax: 2.20, xgBMin: 1.10, xgBMax: 1.40 },
-    { tierName: 'Media Premier', possMin: 61, possMax: 66, xgAMin: 2.10, xgAMax: 2.50, xgBMin: 0.80, xgBMax: 1.10 },
-    { tierName: 'Bassa Premier', possMin: 66, possMax: 71, xgAMin: 2.50, xgAMax: 2.90, xgBMin: 0.55, xgBMax: 0.80 },
-    { tierName: 'Championship', possMin: 71, possMax: 76, xgAMin: 2.90, xgAMax: 3.40, xgBMin: 0.35, xgBMax: 0.60 },
-    { tierName: 'Categorie Inferiori', possMin: 76, possMax: 82, xgAMin: 3.40, xgAMax: 4.10, xgBMin: 0.15, xgBMax: 0.35 },
+    {
+        tierName: 'Top Premier',
+        possMin: 48.0, possMax: 52.0,
+        xgAMin: 1.40, xgAMax: 1.80,
+        xgBMin: 1.40, xgBMax: 1.80
+    },
+    {
+        tierName: 'Zona Champions',
+        possMin: 52.0, possMax: 60.0,
+        xgAMin: 1.80, xgAMax: 2.20,
+        xgBMin: 1.10, xgBMax: 1.40
+    },
+    {
+        tierName: 'Media Premier',
+        possMin: 60.0, possMax: 66.0,
+        xgAMin: 2.20, xgAMax: 2.50,
+        xgBMin: 0.80, xgBMax: 1.10
+    },
+    {
+        tierName: 'Bassa Premier',
+        possMin: 66.0, possMax: 71.0,
+        xgAMin: 2.50, xgAMax: 2.90,
+        xgBMin: 0.55, xgBMax: 0.80
+    },
+    {
+        tierName: 'Championship',
+        possMin: 71.0, possMax: 76.0,
+        xgAMin: 2.90, xgAMax: 3.40,
+        xgBMin: 0.35, xgBMax: 0.55
+    },
+    {
+        tierName: 'Categorie Inferiori',
+        possMin: 76.0, possMax: 85.0,
+        xgAMin: 3.40, xgAMax: 5.00,
+        xgBMin: 0.10, xgBMax: 0.35
+    },
 ];
 
 function getPossTier(val: number): string {

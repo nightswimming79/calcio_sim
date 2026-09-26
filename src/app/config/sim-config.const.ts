@@ -4,7 +4,7 @@ export const SIM_CONFIG = {
         BASE_PASSES_MAX: 8,
         BASE_PASSES_MIN: 3,
         PASSES_VERTICALITY_WEIGHT: 4,
-
+        PASS_STRENGTH_FACTOR: 0.5,
         BREAKTHROUGH_BASE: 0.18,
         BREAKTHROUGH_V_WEIGHT: 0.35,
         BREAKTHROUGH_VD_WEIGHT: 0.42, // Aumentato (da 0.20): amplifica il premio d'attacco per chi tiene la linea alta
