@@ -184,8 +184,12 @@ export class SimAzioneService {
    * Calcola l'xG finale e l'esito specifico del tiro attingendo le soglie direttamente da SIM_CONFIG.
    */
   public calculateShotXG(input: ShotXGInput): ExtendedShotXGResult {
+    // A pari forza (es. 0.5 vs 0.5), il prodotto fa 1.0 (baseXG resta INVARIATO a SR=0)
+    // Il divario individuale sposta la qualità del tiro con una pendenza più morbida (+/- 15%)
+    const attackerBonus = 0.53 + (input.attacker - 0.5) * 0.0;
+    const defenderPenalty = 1.51 - (input.defender - 0.5) * 0.0;
     const finalXG = this.clamp(
-      input.baseXG * (0.6 + input.attacker * 0.8) * (1.2 - input.defender * 0.4),
+      input.baseXG * attackerBonus * defenderPenalty,
       0.01,
       0.95
     );

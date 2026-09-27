@@ -1,67 +1,25 @@
 SR;possesso50;possesso Min;possesso Max;xga50;xga Min;xga Max;xgb50;xgb Min;xgb Max
--15;29.0%;17.5%;40.9%;0.44;0.19;0.87;4.86;2.13;8.87
--14;30.5%;18.6%;42.6%;0.52;0.22;1.03;4.61;1.99;8.30
--13;32.3%;19.9%;44.6%;0.58;0.23;1.15;4.37;1.91;7.94
--12;33.8%;21.0%;46.0%;0.68;0.27;1.30;4.12;1.80 (Top Premier);7.53
--11;35.0%;22.2%;47.6%;0.76;0.28;1.43 (Top Premier);3.84;1.70 (Top Premier);7.05
--10;36.7%;23.5%;49.3% (Top Premier);0.84;0.33;1.62 (Top Premier);3.65;1.61 (Top Premier);6.80
--9;38.0%;24.9%;51.0% (Top Premier);0.91;0.36;1.77 (Top Premier);3.50;1.55 (Top Premier);6.53
--8;39.3%;26.1%;52.4% (Zona Champions);1.00;0.41;1.97 (Zona Champions);3.27;1.41 (Top Premier);6.01
--7;40.5%;27.4%;53.8% (Zona Champions);1.11;0.45;2.10 (Zona Champions);3.03;1.35 (Zona Champions);5.70
--6;42.2%;28.7%;55.2% (Zona Champions);1.21;0.51;2.32 (Media Premier);2.81;1.21 (Zona Champions);5.35
--5;43.6%;30.1%;56.7% (Zona Champions);1.28;0.52;2.47 (Media Premier);2.72;1.20 (Zona Champions);5.03
--4;44.8%;31.2%;58.2% (Zona Champions);1.41 (Top Premier);0.58;2.72 (Bassa Premier);2.58;1.13 (Zona Champions);4.75
--3;46.1%;32.7%;59.4% (Zona Champions);1.55 (Top Premier);0.68;2.96 (Championship);2.36;1.03 (Media Premier);4.49
--2;47.5%;34.0%;60.6% (Media Premier);1.70 (Top Premier);0.73;3.21 (Championship);2.16;0.92 (Media Premier);4.12
--1;48.9% (Top Premier);35.3%;62.0% (Media Premier);1.76 (Top Premier);0.77;3.40 (Championship);2.08;0.88 (Media Premier);3.87
-0;49.9% (Top Premier);36.7%;63.3% (Media Premier);1.93 (Zona Champions);0.82;3.63 (Categorie Inferiori);1.92;0.82 (Media Premier);3.66
-1;51.3% (Top Premier);38.1%;64.6% (Media Premier);2.09 (Zona Champions);0.90;3.89 (Categorie Inferiori);1.77 (Top Premier);0.75 (Bassa Premier);3.37
-2;52.6% (Zona Champions);39.6%;66.1% (Bassa Premier);2.14 (Zona Champions);0.93;4.15 (Categorie Inferiori);1.70 (Top Premier);0.74 (Bassa Premier);3.16
-3;54.1% (Zona Champions);40.5%;67.4% (Bassa Premier);2.44 (Media Premier);1.05;4.51 (Categorie Inferiori);1.51 (Top Premier);0.67 (Bassa Premier);2.93
-4;55.1% (Zona Champions);42.0%;68.5% (Bassa Premier);2.57 (Bassa Premier);1.15;4.75 (Categorie Inferiori);1.39 (Zona Champions);0.61 (Bassa Premier);2.76
-5;56.5% (Zona Champions);43.4%;69.9% (Bassa Premier);2.71 (Bassa Premier);1.20;5.04;1.30 (Zona Champions);0.54 (Championship);2.44
-6;57.9% (Zona Champions);44.8%;71.3% (Championship);2.83 (Bassa Premier);1.22;5.30;1.22 (Zona Champions);0.51 (Championship);2.32
-7;59.2% (Zona Champions);46.1%;72.6% (Championship);3.04 (Championship);1.35;5.76;1.10 (Zona Champions);0.48 (Championship);2.08
-8;60.6% (Media Premier);47.7%;73.8% (Championship);3.29 (Championship);1.46 (Top Premier);5.99;1.01 (Media Premier);0.42 (Championship);1.97
-9;61.8% (Media Premier);49.1% (Top Premier);75.1% (Championship);3.50 (Categorie Inferiori);1.53 (Top Premier);6.48;0.91 (Media Premier);0.36 (Championship);1.76 (Top Premier)
-10;63.2% (Media Premier);50.8% (Top Premier);76.5% (Categorie Inferiori);3.69 (Categorie Inferiori);1.60 (Top Premier);6.76;0.83 (Media Premier);0.33 (Categorie Inferiori);1.64 (Top Premier)
-11;64.9% (Media Premier);52.4% (Zona Champions);77.8% (Categorie Inferiori);3.86 (Categorie Inferiori);1.73 (Top Premier);7.10;0.74 (Bassa Premier);0.29 (Categorie Inferiori);1.44 (Top Premier)
-12;66.3% (Bassa Premier);53.9% (Zona Champions);79.0% (Categorie Inferiori);4.18 (Categorie Inferiori);1.83 (Zona Champions);7.50;0.68 (Bassa Premier);0.26 (Categorie Inferiori);1.30 (Zona Champions)
-13;67.7% (Bassa Premier);55.6% (Zona Champions);80.2% (Categorie Inferiori);4.31 (Categorie Inferiori);1.89 (Zona Champions);7.94;0.58 (Bassa Premier);0.22 (Categorie Inferiori);1.15 (Zona Champions)
-14;69.3% (Bassa Premier);57.3% (Zona Champions);81.3% (Categorie Inferiori);4.61 (Categorie Inferiori);2.01 (Zona Champions);8.37;0.51 (Championship);0.20 (Categorie Inferiori);1.02 (Media Premier)
-15;70.9% (Bassa Premier);58.8% (Zona Champions);82.5% (Categorie Inferiori);4.93 (Categorie Inferiori);2.17 (Zona Champions);8.79;0.44 (Championship);0.19 (Categorie Inferiori);0.87 (Media Premier)
-16;72.5% (Championship);61.0% (Media Premier);83.6% (Categorie Inferiori);5.06;2.18 (Zona Champions);9.22;0.41 (Championship);0.18 (Categorie Inferiori);0.81 (Media Premier)
-17;74.2% (Championship);63.0% (Media Premier);84.9% (Categorie Inferiori);5.22;2.30 (Media Premier);9.52;0.36 (Championship);0.16 (Categorie Inferiori);0.70 (Bassa Premier)
-18;75.9% (Championship);65.3% (Media Premier);86.0%;5.58;2.51 (Bassa Premier);9.97;0.35 (Championship);0.15 (Categorie Inferiori);0.67 (Bassa Premier)
-19;77.7% (Categorie Inferiori);67.5% (Bassa Premier);87.0%;5.80;2.58 (Bassa Premier);10.44;0.31 (Categorie Inferiori);0.13 (Categorie Inferiori);0.61 (Bassa Premier)
-20;79.5% (Categorie Inferiori);69.8% (Bassa Premier);88.3%;5.90;2.61 (Bassa Premier);10.55;0.29 (Categorie Inferiori);0.11 (Categorie Inferiori);0.60 (Bassa Premier)
-21;81.3% (Categorie Inferiori);72.1% (Championship);89.4%;6.07;2.72 (Bassa Premier);10.88;0.29 (Categorie Inferiori);0.12 (Categorie Inferiori);0.58 (Bassa Premier)
-22;83.2% (Categorie Inferiori);74.7% (Championship);90.5%;6.37;2.83 (Bassa Premier);11.15;0.29 (Categorie Inferiori);0.12 (Categorie Inferiori);0.59 (Bassa Premier)
-23;85.3%;77.7% (Categorie Inferiori);91.7%;6.81;2.96 (Championship);11.78;0.26 (Categorie Inferiori);0.11 (Categorie Inferiori);0.53 (Championship)
-24;85.8%;78.2% (Categorie Inferiori);92.0%;7.12;3.07 (Championship);12.26;0.26 (Categorie Inferiori);0.10 (Categorie Inferiori);0.51 (Championship)
-25;85.9%;78.3% (Categorie Inferiori);92.1%;7.13;3.18 (Championship);12.55;0.26 (Categorie Inferiori);0.10 (Categorie Inferiori);0.50 (Championship)
-26;86.2%;78.7% (Categorie Inferiori);92.3%;7.46;3.35 (Championship);13.17;0.25 (Categorie Inferiori);0.10 (Categorie Inferiori);0.49 (Championship)
-27;86.5%;79.0% (Categorie Inferiori);92.5%;7.55;3.31 (Championship);13.23;0.23 (Categorie Inferiori);0.09;0.42 (Championship)
-28;86.6%;79.2% (Categorie Inferiori);92.6%;7.74;3.35 (Championship);13.29;0.22 (Categorie Inferiori);0.08;0.42 (Championship)
-29;87.0%;79.6% (Categorie Inferiori);92.7%;7.71;3.37 (Championship);13.54;0.21 (Categorie Inferiori);0.08;0.42 (Championship)
-30;87.2%;79.8% (Categorie Inferiori);92.8%;7.85;3.44 (Categorie Inferiori);13.56;0.21 (Categorie Inferiori);0.08;0.41 (Championship)
-31;87.3%;80.2% (Categorie Inferiori);93.2%;7.78;3.48 (Categorie Inferiori);13.64;0.20 (Categorie Inferiori);0.08;0.41 (Championship)
-32;87.6%;80.5% (Categorie Inferiori);93.2%;8.00;3.49 (Categorie Inferiori);13.87;0.20 (Categorie Inferiori);0.08;0.40 (Championship)
-33;88.0%;80.8% (Categorie Inferiori);93.4%;7.96;3.51 (Categorie Inferiori);13.99;0.16 (Categorie Inferiori);0.07;0.33 (Categorie Inferiori)
-34;88.1%;81.0% (Categorie Inferiori);93.5%;7.95;3.57 (Categorie Inferiori);14.04;0.17 (Categorie Inferiori);0.07;0.32 (Categorie Inferiori)
-35;88.3%;81.2% (Categorie Inferiori);93.6%;8.12;3.63 (Categorie Inferiori);14.28;0.16 (Categorie Inferiori);0.07;0.31 (Categorie Inferiori)
-36;88.6%;81.6% (Categorie Inferiori);93.8%;8.23;3.67 (Categorie Inferiori);14.39;0.16 (Categorie Inferiori);0.06;0.31 (Categorie Inferiori)
-37;88.8%;81.9% (Categorie Inferiori);94.0%;8.40;3.66 (Categorie Inferiori);14.45;0.15 (Categorie Inferiori);0.06;0.30 (Categorie Inferiori)
-38;88.9%;81.9% (Categorie Inferiori);93.9%;8.45;3.68 (Categorie Inferiori);14.69;0.15 (Categorie Inferiori);0.06;0.30 (Categorie Inferiori)
-39;88.6%;81.9% (Categorie Inferiori);94.0%;8.34;3.74 (Categorie Inferiori);14.75;0.15 (Categorie Inferiori);0.06;0.29 (Categorie Inferiori)
-40;88.8%;81.9% (Categorie Inferiori);93.9%;8.55;3.84 (Categorie Inferiori);14.93;0.15 (Categorie Inferiori);0.06;0.29 (Categorie Inferiori)
-41;88.9%;82.0% (Categorie Inferiori);94.0%;8.73;3.86 (Categorie Inferiori);15.05;0.15 (Categorie Inferiori);0.06;0.28 (Categorie Inferiori)
-42;88.9%;82.0% (Categorie Inferiori);94.0%;8.65;3.87 (Categorie Inferiori);15.12;0.15 (Categorie Inferiori);0.06;0.27 (Categorie Inferiori)
-43;88.8%;81.9% (Categorie Inferiori);94.0%;8.82;3.93 (Categorie Inferiori);15.27;0.14 (Categorie Inferiori);0.06;0.27 (Categorie Inferiori)
-44;88.9%;81.9% (Categorie Inferiori);94.1%;8.91;3.93 (Categorie Inferiori);15.38;0.13 (Categorie Inferiori);0.05;0.26 (Categorie Inferiori)
-45;88.9%;82.1% (Categorie Inferiori);94.0%;9.05;3.92 (Categorie Inferiori);15.54;0.13 (Categorie Inferiori);0.05;0.26 (Categorie Inferiori)
-46;89.0%;81.9% (Categorie Inferiori);94.1%;8.98;4.00 (Categorie Inferiori);15.62;0.13 (Categorie Inferiori);0.05;0.25 (Categorie Inferiori)
-47;88.9%;82.0% (Categorie Inferiori);94.0%;9.12;4.09 (Categorie Inferiori);15.89;0.13 (Categorie Inferiori);0.05;0.25 (Categorie Inferiori)
-48;88.9%;82.1% (Categorie Inferiori);94.1%;9.15;4.10 (Categorie Inferiori);15.96;0.09;0.04;0.18 (Categorie Inferiori)
-49;88.9%;82.1% (Categorie Inferiori);94.1%;9.33;4.13 (Categorie Inferiori);16.05;0.09;0.04;0.17 (Categorie Inferiori)
-50;89.0%;82.0% (Categorie Inferiori);94.1%;9.26;4.15 (Categorie Inferiori);16.27;0.09;0.04;0.17 (Categorie Inferiori)
+-3;46.2%;32.7%;59.2% (Zona Champions);1.29;0.53;2.36 (Media Premier);1.82;0.81 (Media Premier);3.41
+-2;47.4%;34.0%;60.5% (Media Premier);1.39;0.58;2.59 (Bassa Premier);1.74 (Top Premier);0.77 (Bassa Premier);3.25
+-1;48.8% (Top Premier);35.1%;61.9% (Media Premier);1.45 (Top Premier);0.62;2.71 (Bassa Premier);1.72 (Top Premier);0.73 (Bassa Premier);3.14
+0;50.1% (Top Premier);36.9%;63.2% (Media Premier);1.57 (Top Premier);0.68;2.93 (Championship);1.58 (Top Premier);0.67 (Bassa Premier);2.96
+1;51.2% (Top Premier);38.1%;64.5% (Media Premier);1.71 (Top Premier);0.73;3.16 (Championship);1.46 (Top Premier);0.65 (Bassa Premier);2.70
+2;52.7% (Zona Champions);39.4%;66.1% (Bassa Premier);1.76 (Top Premier);0.76;3.27 (Championship);1.39 (Zona Champions);0.59 (Bassa Premier);2.57
+3;53.9% (Zona Champions);40.6%;67.2% (Bassa Premier);1.83 (Zona Champions);0.78;3.41 (Categorie Inferiori);1.34 (Zona Champions);0.54 (Championship);2.39
+4;55.3% (Zona Champions);42.1%;68.7% (Bassa Premier);1.96 (Zona Champions);0.84;3.63 (Categorie Inferiori);1.21 (Zona Champions);0.51 (Championship);2.25
+5;56.6% (Zona Champions);43.3%;69.8% (Bassa Premier);2.10 (Zona Champions);0.91;3.82 (Categorie Inferiori);1.11 (Zona Champions);0.46 (Championship);2.10
+6;58.0% (Zona Champions);45.0%;71.3% (Championship);2.18 (Zona Champions);0.94;3.98 (Categorie Inferiori);1.03 (Media Premier);0.43 (Championship);1.97
+7;59.5% (Zona Champions);46.4%;72.6% (Championship);2.25 (Media Premier);0.99;4.19 (Categorie Inferiori);0.98 (Media Premier);0.40 (Championship);1.88
+8;60.6% (Media Premier);47.9%;73.8% (Championship);2.41 (Media Premier);1.08;4.47 (Categorie Inferiori);0.92 (Media Premier);0.39 (Championship);1.74 (Top Premier)
+9;62.1% (Media Premier);49.4% (Top Premier);75.2% (Championship);2.53 (Bassa Premier);1.11;4.57 (Categorie Inferiori);0.80 (Media Premier);0.32 (Categorie Inferiori);1.57 (Top Premier)
+10;63.6% (Media Premier);51.0% (Top Premier);76.4% (Categorie Inferiori);2.65 (Bassa Premier);1.18;4.82 (Categorie Inferiori);0.76 (Bassa Premier);0.30 (Categorie Inferiori);1.47 (Top Premier)
+11;64.8% (Media Premier);52.4% (Zona Champions);77.8% (Categorie Inferiori);2.77 (Bassa Premier);1.25;5.08;0.66 (Bassa Premier);0.25 (Categorie Inferiori);1.28 (Zona Champions)
+12;66.4% (Bassa Premier);54.3% (Zona Champions);79.1% (Categorie Inferiori);2.95 (Championship);1.29;5.34;0.61 (Bassa Premier);0.24 (Categorie Inferiori);1.19 (Zona Champions)
+13;67.8% (Bassa Premier);56.1% (Zona Champions);80.2% (Categorie Inferiori);3.05 (Championship);1.40 (Top Premier);5.58;0.53 (Championship);0.21 (Categorie Inferiori);1.03 (Media Premier)
+14;69.6% (Bassa Premier);57.8% (Zona Champions);81.4% (Categorie Inferiori);3.18 (Championship);1.39;5.71;0.48 (Championship);0.19 (Categorie Inferiori);0.92 (Media Premier)
+15;71.1% (Championship);59.6% (Zona Champions);82.6% (Categorie Inferiori);3.42 (Categorie Inferiori);1.49 (Top Premier);6.07;0.42 (Championship);0.19 (Categorie Inferiori);0.83 (Media Premier)
+16;72.9% (Championship);61.6% (Media Premier);83.7% (Categorie Inferiori);3.50 (Categorie Inferiori);1.51 (Top Premier);6.25;0.37 (Championship);0.17 (Categorie Inferiori);0.73 (Bassa Premier)
+17;74.4% (Championship);63.5% (Media Premier);84.8% (Categorie Inferiori);3.62 (Categorie Inferiori);1.59 (Top Premier);6.45;0.34 (Categorie Inferiori);0.16 (Categorie Inferiori);0.69 (Bassa Premier)
+18;76.0% (Championship);65.7% (Media Premier);85.9%;3.73 (Categorie Inferiori);1.63 (Top Premier);6.57;0.33 (Categorie Inferiori);0.15 (Categorie Inferiori);0.67 (Bassa Premier)
+19;77.9% (Categorie Inferiori);67.9% (Bassa Premier);87.0%;3.85 (Categorie Inferiori);1.68 (Top Premier);6.82;0.33 (Categorie Inferiori);0.14 (Categorie Inferiori);0.65 (Bassa Premier)
+20;79.5% (Categorie Inferiori);70.2% (Bassa Premier);88.2%;3.90 (Categorie Inferiori);1.76 (Top Premier);7.01;0.34 (Categorie Inferiori);0.13 (Categorie Inferiori);0.66 (Bassa Premier)
