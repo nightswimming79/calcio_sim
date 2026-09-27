@@ -37,7 +37,7 @@ const EXPECTED_RANGES: BenchmarkConfig[] = [
         metrics: {
             Goals: { teamA: { min: 1.0, max: 2.2 }, teamB: { min: 1.0, max: 2.2 } },
             TotalXG: { teamA: { min: 1.0, max: 2.2 }, teamB: { min: 1.0, max: 2.2 } },
-            XGPerShot: { teamA: { min: 0.14, max: 0.18 }, teamB: { min: 0.14, max: 0.18 } },
+            XGPerShot: { teamA: { min: 0.14, max: 0.17 }, teamB: { min: 0.14, max: 0.17 } },
             PossessionShare: { teamA: { min: 48.0, max: 52.0 }, teamB: { min: 48.0, max: 52.0 } },
             ShotsTotal: { teamA: { min: 7.0, max: 13.0 }, teamB: { min: 7.0, max: 13.0 } },
             ShotsOnTarget: { teamA: { min: 3.0, max: 7.0 }, teamB: { min: 3.0, max: 7.0 } },
@@ -46,14 +46,14 @@ const EXPECTED_RANGES: BenchmarkConfig[] = [
             CornersWon: { teamA: { min: 1.0, max: 2.5 }, teamB: { min: 1.0, max: 2.5 } },
             LooseBallsWon: { teamA: { min: 3.0, max: 6.0 }, teamB: { min: 3.0, max: 6.0 } },
             PassesTotal: { teamA: { min: 120.0, max: 165.0 }, teamB: { min: 120.0, max: 165.0 } },
-            PassesOpenPlay: { teamA: { min: 80.0, max: 160.0 }, teamB: { min: 80.0, max: 160.0 } },
+            PassesOpenPlay: { teamA: { min: 80.0, max: 130.0 }, teamB: { min: 80.0, max: 130.0 } },
             PassesCounterAttack: { teamA: { min: 10.0, max: 18.0 }, teamB: { min: 10.0, max: 18.0 } },
             PassesCorner: { teamA: { min: 2.0, max: 5.0 }, teamB: { min: 2.0, max: 5.0 } },
             PassesLooseBall: { teamA: { min: 6.0, max: 12.0 }, teamB: { min: 6.0, max: 12.0 } },
-            XGOpenPlay: { teamA: { min: 0.5, max: 1.2 }, teamB: { min: 0.5, max: 1.2 } },
-            XGCounterAttack: { teamA: { min: 0.3, max: 0.7 }, teamB: { min: 0.3, max: 0.7 } },
-            XGCorner: { teamA: { min: 0.08, max: 0.25 }, teamB: { min: 0.08, max: 0.25 } },
-            XGLooseBall: { teamA: { min: 0.1, max: 0.3 }, teamB: { min: 0.1, max: 0.3 } }
+            XGOpenPlay: { teamA: { min: 0.52, max: 1.05 }, teamB: { min: 0.52, max: 1.05 } },
+            XGCounterAttack: { teamA: { min: 0.30, max: 0.65 }, teamB: { min: 0.30, max: 0.65 } },
+            XGCorner: { teamA: { min: 0.08, max: 0.22 }, teamB: { min: 0.08, max: 0.22 } },
+            XGLooseBall: { teamA: { min: 0.10, max: 0.28 }, teamB: { min: 0.10, max: 0.28 } }
         }
     },
 
@@ -63,7 +63,7 @@ const EXPECTED_RANGES: BenchmarkConfig[] = [
         metrics: {
             Goals: { teamA: { min: 1.4, max: 2.7 }, teamB: { min: 0.6, max: 1.6 } },
             TotalXG: { teamA: { min: 1.4, max: 2.7 }, teamB: { min: 0.6, max: 1.5 } },
-            XGPerShot: { teamA: { min: 0.13, max: 0.17 }, teamB: { min: 0.1, max: 0.15 } },
+            XGPerShot: { teamA: { min: 0.13, max: 0.17 }, teamB: { min: 0.09, max: 0.14 } },
             PossessionShare: { teamA: { min: 54.0, max: 59.0 }, teamB: { min: 41.0, max: 46.0 } },
             ShotsTotal: { teamA: { min: 9.5, max: 17.0 }, teamB: { min: 6.5, max: 12.0 } },
             ShotsOnTarget: { teamA: { min: 4.5, max: 8.6 }, teamB: { min: 2.8, max: 5.8 } },
@@ -72,23 +72,24 @@ const EXPECTED_RANGES: BenchmarkConfig[] = [
             CornersWon: { teamA: { min: 1.5, max: 2.9 }, teamB: { min: 1.0, max: 2.4 } },
             LooseBallsWon: { teamA: { min: 4.3, max: 6.8 }, teamB: { min: 3.8, max: 6.4 } },
             PassesTotal: { teamA: { min: 132.0, max: 208.0 }, teamB: { min: 100.0, max: 155.0 } },
-            PassesOpenPlay: { teamA: { min: 90.0, max: 170.0 }, teamB: { min: 78.0, max: 130.0 } },
+            PassesOpenPlay: { teamA: { min: 90.0, max: 160.0 }, teamB: { min: 78.0, max: 122.0 } },
             PassesCounterAttack: { teamA: { min: 20.0, max: 26.0 }, teamB: { min: 8.0, max: 16.0 } },
             PassesCorner: { teamA: { min: 3.0, max: 5.6 }, teamB: { min: 2.0, max: 4.5 } },
             PassesLooseBall: { teamA: { min: 8.5, max: 13.5 }, teamB: { min: 8.0, max: 12.5 } },
-            XGOpenPlay: { teamA: { min: 0.4, max: 1.55 }, teamB: { min: 0.3, max: 0.85 } },
-            XGCounterAttack: { teamA: { min: 0.65, max: 0.8 }, teamB: { min: 0.2, max: 0.6 } },
-            XGCorner: { teamA: { min: 0.1, max: 0.21 }, teamB: { min: 0.05, max: 0.18 } },
-            XGLooseBall: { teamA: { min: 0.14, max: 0.29 }, teamB: { min: 0.08, max: 0.22 } }
+            XGOpenPlay: { teamA: { min: 0.51, max: 1.45 }, teamB: { min: 0.27, max: 0.77 } },
+            XGCounterAttack: { teamA: { min: 0.65, max: 0.78 }, teamB: { min: 0.20, max: 0.40 } },
+            XGCorner: { teamA: { min: 0.10, max: 0.20 }, teamB: { min: 0.05, max: 0.15 } },
+            XGLooseBall: { teamA: { min: 0.14, max: 0.27 }, teamB: { min: 0.08, max: 0.18 } }
         }
     },
+
     // 3. TOP CLUB VS MEDIA CLASSIFICA (SR = 9)
     {
         StrengthRatio: 9,
         metrics: {
             Goals: { teamA: { min: 1.8, max: 3.3 }, teamB: { min: 0.3, max: 1.2 } },
             TotalXG: { teamA: { min: 1.8, max: 3.2 }, teamB: { min: 0.4, max: 1.1 } },
-            XGPerShot: { teamA: { min: 0.14, max: 0.18 }, teamB: { min: 0.08, max: 0.14 } },
+            XGPerShot: { teamA: { min: 0.14, max: 0.18 }, teamB: { min: 0.08, max: 0.13 } },
             PossessionShare: { teamA: { min: 60.0, max: 65.0 }, teamB: { min: 35.0, max: 40.0 } },
             ShotsTotal: { teamA: { min: 12.0, max: 19.5 }, teamB: { min: 4.5, max: 9.0 } },
             ShotsOnTarget: { teamA: { min: 5.5, max: 9.8 }, teamB: { min: 1.8, max: 4.5 } },
@@ -97,23 +98,24 @@ const EXPECTED_RANGES: BenchmarkConfig[] = [
             CornersWon: { teamA: { min: 1.8, max: 3.2 }, teamB: { min: 0.8, max: 2.2 } },
             LooseBallsWon: { teamA: { min: 4.4, max: 7.0 }, teamB: { min: 3.5, max: 6.2 } },
             PassesTotal: { teamA: { min: 145.0, max: 225.0 }, teamB: { min: 80.0, max: 130.0 } },
-            PassesOpenPlay: { teamA: { min: 98.0, max: 185.0 }, teamB: { min: 65.0, max: 115.0 } },
+            PassesOpenPlay: { teamA: { min: 98.0, max: 170.0 }, teamB: { min: 65.0, max: 101.0 } },
             PassesCounterAttack: { teamA: { min: 25.0, max: 32.0 }, teamB: { min: 5.0, max: 12.0 } },
             PassesCorner: { teamA: { min: 3.5, max: 6.2 }, teamB: { min: 1.5, max: 3.8 } },
             PassesLooseBall: { teamA: { min: 8.8, max: 14.0 }, teamB: { min: 7.0, max: 12.0 } },
-            XGOpenPlay: { teamA: { min: 0.5, max: 1.85 }, teamB: { min: 0.2, max: 0.6 } },
-            XGCounterAttack: { teamA: { min: 0.75, max: 0.95 }, teamB: { min: 0.12, max: 0.45 } },
-            XGCorner: { teamA: { min: 0.12, max: 0.24 }, teamB: { min: 0.03, max: 0.15 } },
-            XGLooseBall: { teamA: { min: 0.17, max: 0.33 }, teamB: { min: 0.05, max: 0.2 } }
+            XGOpenPlay: { teamA: { min: 0.76, max: 1.72 }, teamB: { min: 0.20, max: 0.50 } },
+            XGCounterAttack: { teamA: { min: 0.75, max: 0.93 }, teamB: { min: 0.12, max: 0.32 } },
+            XGCorner: { teamA: { min: 0.12, max: 0.23 }, teamB: { min: 0.03, max: 0.12 } },
+            XGLooseBall: { teamA: { min: 0.17, max: 0.32 }, teamB: { min: 0.05, max: 0.16 } }
         }
     },
-    // 4. TOP CLUB VS BASSA CLASSIFICA (SR = 12/13)
+
+    // 4. TOP CLUB VS BASSA CLASSIFICA (SR = 13)
     {
         StrengthRatio: 13,
         metrics: {
             Goals: { teamA: { min: 2.2, max: 3.8 }, teamB: { min: 0.2, max: 1.0 } },
             TotalXG: { teamA: { min: 2.2, max: 3.6 }, teamB: { min: 0.2, max: 0.9 } },
-            XGPerShot: { teamA: { min: 0.15, max: 0.19 }, teamB: { min: 0.07, max: 0.12 } },
+            XGPerShot: { teamA: { min: 0.15, max: 0.18 }, teamB: { min: 0.07, max: 0.12 } },
             PossessionShare: { teamA: { min: 65.0, max: 70.0 }, teamB: { min: 30.0, max: 35.0 } },
             ShotsTotal: { teamA: { min: 14.0, max: 22.0 }, teamB: { min: 3.0, max: 7.5 } },
             ShotsOnTarget: { teamA: { min: 6.8, max: 11.2 }, teamB: { min: 1.0, max: 3.5 } },
@@ -122,14 +124,14 @@ const EXPECTED_RANGES: BenchmarkConfig[] = [
             CornersWon: { teamA: { min: 2.2, max: 3.8 }, teamB: { min: 0.5, max: 1.8 } },
             LooseBallsWon: { teamA: { min: 4.8, max: 7.5 }, teamB: { min: 3.0, max: 5.8 } },
             PassesTotal: { teamA: { min: 160.0, max: 245.0 }, teamB: { min: 65.0, max: 115.0 } },
-            PassesOpenPlay: { teamA: { min: 110.0, max: 200.0 }, teamB: { min: 50.0, max: 95.0 } },
+            PassesOpenPlay: { teamA: { min: 110.0, max: 180.0 }, teamB: { min: 50.0, max: 90.0 } },
             PassesCounterAttack: { teamA: { min: 28.0, max: 36.0 }, teamB: { min: 3.5, max: 9.5 } },
             PassesCorner: { teamA: { min: 4.0, max: 7.2 }, teamB: { min: 1.0, max: 3.0 } },
             PassesLooseBall: { teamA: { min: 9.5, max: 15.0 }, teamB: { min: 6.0, max: 11.0 } },
-            XGOpenPlay: { teamA: { min: 0.8, max: 2.20 }, teamB: { min: 0.1, max: 0.45 } },
-            XGCounterAttack: { teamA: { min: 0.85, max: 1.10 }, teamB: { min: 0.08, max: 0.35 } },
-            XGCorner: { teamA: { min: 0.15, max: 0.28 }, teamB: { min: 0.02, max: 0.12 } },
-            XGLooseBall: { teamA: { min: 0.20, max: 0.40 }, teamB: { min: 0.03, max: 0.15 } }
+            XGOpenPlay: { teamA: { min: 0.90, max: 1.90 }, teamB: { min: 0.07, max: 0.40 } },
+            XGCounterAttack: { teamA: { min: 0.85, max: 1.05 }, teamB: { min: 0.08, max: 0.25 } },
+            XGCorner: { teamA: { min: 0.15, max: 0.27 }, teamB: { min: 0.02, max: 0.11 } },
+            XGLooseBall: { teamA: { min: 0.30, max: 0.38 }, teamB: { min: 0.03, max: 0.14 } }
         }
     },
 
@@ -139,7 +141,7 @@ const EXPECTED_RANGES: BenchmarkConfig[] = [
         metrics: {
             Goals: { teamA: { min: 2.6, max: 4.4 }, teamB: { min: 0.1, max: 0.8 } },
             TotalXG: { teamA: { min: 2.6, max: 4.2 }, teamB: { min: 0.15, max: 0.75 } },
-            XGPerShot: { teamA: { min: 0.15, max: 0.20 }, teamB: { min: 0.06, max: 0.11 } },
+            XGPerShot: { teamA: { min: 0.15, max: 0.19 }, teamB: { min: 0.06, max: 0.11 } },
             PossessionShare: { teamA: { min: 70.0, max: 75.0 }, teamB: { min: 25.0, max: 30.0 } },
             ShotsTotal: { teamA: { min: 16.0, max: 24.5 }, teamB: { min: 2.5, max: 6.0 } },
             ShotsOnTarget: { teamA: { min: 8.0, max: 12.8 }, teamB: { min: 0.8, max: 2.8 } },
@@ -147,15 +149,15 @@ const EXPECTED_RANGES: BenchmarkConfig[] = [
             ShotsWoodwork: { teamA: { min: 0.7, max: 1.4 }, teamB: { min: 0.02, max: 0.3 } },
             CornersWon: { teamA: { min: 2.5, max: 4.2 }, teamB: { min: 0.3, max: 1.4 } },
             LooseBallsWon: { teamA: { min: 5.0, max: 7.8 }, teamB: { min: 2.5, max: 5.2 } },
-            PassesTotal: { teamA: { min: 175.0, max: 260.0 }, teamB: { min: 50.0, max: 98.0 } },
-            PassesOpenPlay: { teamA: { min: 120.0, max: 215.0 }, teamB: { min: 38.0, max: 80.0 } },
+            PassesTotal: { teamA: { min: 175.0, max: 260.0 }, teamB: { min: 45.0, max: 85.0 } },
+            PassesOpenPlay: { teamA: { min: 120.0, max: 190.0 }, teamB: { min: 35.0, max: 64.0 } },
             PassesCounterAttack: { teamA: { min: 30.0, max: 39.0 }, teamB: { min: 2.5, max: 7.5 } },
             PassesCorner: { teamA: { min: 4.5, max: 8.0 }, teamB: { min: 0.6, max: 2.4 } },
             PassesLooseBall: { teamA: { min: 10.0, max: 15.8 }, teamB: { min: 5.0, max: 9.8 } },
-            XGOpenPlay: { teamA: { min: 1.1, max: 2.60 }, teamB: { min: 0.08, max: 0.35 } },
-            XGCounterAttack: { teamA: { min: 0.92, max: 1.22 }, teamB: { min: 0.05, max: 0.25 } },
-            XGCorner: { teamA: { min: 0.17, max: 0.32 }, teamB: { min: 0.01, max: 0.09 } },
-            XGLooseBall: { teamA: { min: 0.22, max: 0.45 }, teamB: { min: 0.02, max: 0.12 } }
+            XGOpenPlay: { teamA: { min: 1.21, max: 2.30 }, teamB: { min: 0.07, max: 0.33 } },
+            XGCounterAttack: { teamA: { min: 0.92, max: 1.20 }, teamB: { min: 0.05, max: 0.22 } },
+            XGCorner: { teamA: { min: 0.17, max: 0.30 }, teamB: { min: 0.01, max: 0.08 } },
+            XGLooseBall: { teamA: { min: 0.30, max: 0.40 }, teamB: { min: 0.02, max: 0.12 } }
         }
     },
 
@@ -165,26 +167,25 @@ const EXPECTED_RANGES: BenchmarkConfig[] = [
         metrics: {
             Goals: { teamA: { min: 3.0, max: 5.0 }, teamB: { min: 0.0, max: 0.6 } },
             TotalXG: { teamA: { min: 3.0, max: 4.8 }, teamB: { min: 0.1, max: 0.55 } },
-            XGPerShot: { teamA: { min: 0.16, max: 0.21 }, teamB: { min: 0.05, max: 0.10 } },
+            XGPerShot: { teamA: { min: 0.16, max: 0.20 }, teamB: { min: 0.05, max: 0.115 } },
             PossessionShare: { teamA: { min: 76.0, max: 82.0 }, teamB: { min: 18.0, max: 24.0 } },
             ShotsTotal: { teamA: { min: 18.0, max: 27.0 }, teamB: { min: 1.5, max: 4.8 } },
-            ShotsOnTarget: { teamA: { min: 9.0, max: 14.5 }, teamB: { min: 0.4, max: 2.0 } },
+            ShotsOnTarget: { teamA: { min: 9.0, max: 14.5 }, teamB: { min: 0.5, max: 2.0 } },
             ShotsBlocked: { teamA: { min: 4.8, max: 8.0 }, teamB: { min: 0.3, max: 1.5 } },
             ShotsWoodwork: { teamA: { min: 0.8, max: 1.6 }, teamB: { min: 0.0, max: 0.2 } },
             CornersWon: { teamA: { min: 2.8, max: 4.8 }, teamB: { min: 0.1, max: 1.0 } },
             LooseBallsWon: { teamA: { min: 5.2, max: 8.2 }, teamB: { min: 2.0, max: 4.6 } },
-            PassesTotal: { teamA: { min: 190.0, max: 280.0 }, teamB: { min: 35.0, max: 80.0 } },
-            PassesOpenPlay: { teamA: { min: 135.0, max: 230.0 }, teamB: { min: 25.0, max: 65.0 } },
+            PassesTotal: { teamA: { min: 190.0, max: 280.0 }, teamB: { min: 30.0, max: 60.0 } },
+            PassesOpenPlay: { teamA: { min: 135.0, max: 205.0 }, teamB: { min: 22.0, max: 43.0 } },
             PassesCounterAttack: { teamA: { min: 32.0, max: 42.0 }, teamB: { min: 1.5, max: 5.5 } },
             PassesCorner: { teamA: { min: 5.0, max: 9.0 }, teamB: { min: 0.2, max: 1.8 } },
             PassesLooseBall: { teamA: { min: 10.5, max: 16.5 }, teamB: { min: 4.0, max: 8.5 } },
-            XGOpenPlay: { teamA: { min: 1.4, max: 3.00 }, teamB: { min: 0.05, max: 0.25 } },
-            XGCounterAttack: { teamA: { min: 1.00, max: 1.35 }, teamB: { min: 0.02, max: 0.18 } },
-            XGCorner: { teamA: { min: 0.20, max: 0.38 }, teamB: { min: 0.0, max: 0.06 } },
-            XGLooseBall: { teamA: { min: 0.25, max: 0.50 }, teamB: { min: 0.01, max: 0.08 } }
+            XGOpenPlay: { teamA: { min: 1.45, max: 2.65 }, teamB: { min: 0.05, max: 0.25 } },
+            XGCounterAttack: { teamA: { min: 1.00, max: 1.30 }, teamB: { min: 0.02, max: 0.16 } },
+            XGCorner: { teamA: { min: 0.20, max: 0.36 }, teamB: { min: 0.00, max: 0.06 } },
+            XGLooseBall: { teamA: { min: 0.35, max: 0.49 }, teamB: { min: 0.01, max: 0.08 } }
         }
     }
-
 ];
 
 function loadLatestCsv(outputDir: string): { filepath: string; rows: DatasetRow[] } {
