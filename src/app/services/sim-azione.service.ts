@@ -57,18 +57,11 @@ export class SimAzioneService {
 
     const cfgP = SIM_CONFIG.POSSESSION;
 
-    // --- CALCOLO PASSAGGI BASATO DIRETTAMENTE SU MIDFIELD VS PRESSING ---
+    // --- PASSAGGI CONTINUI CON CURVA LOGARITMICA ---
     const basePasses = cfgP.BASE_PASSES_MAX - v * cfgP.PASSES_VERTICALITY_WEIGHT;
+    const strengthPassMultiplier = this.calculatePassMultiplier(attackingTeam, defendingTeam);
 
-    // Se il centrocampo dell'attaccante domina sul pressing avversario, la squadra consolida il possesso.
-    // Se le due squadre si equivalgono (es. 80 vs 80), il rapporto vale 1.0 (nessuna alterazione al valore base).
-    const controlRatio = (attackingTeam.midfield + attackingTeam.playmaking) /
-      (defendingTeam.pressing + defendingTeam.defense);
-
-    // Moltiplicatore fluido e continuo basato unicamente sul rapporto di controllo del campo
-    const strengthPassMultiplier = this.clamp(controlRatio, 0.4, 1.8);
-
-    // NOTA: niente Math.floor per evitare gradini e salti di possesso nelle simulazioni
+    // Passaggi espressi in decimale continuo per evitare gradini nei calcoli aggregati
     const passesCompleted = basePasses * strengthPassMultiplier;
 
     const completionProbability = this.calculateCompletionProbability(attackingTeam, defendingTeam, v, d);
@@ -91,7 +84,7 @@ export class SimAzioneService {
         counterAttackRisk: Number(counterRisk.toFixed(2)),
         highRecovery: isHighRecovery,
         completionProbability: Number(completionProbability.toFixed(2)),
-        passesCompleted: Math.round(passesCompleted)
+        passesCompleted: Number(passesCompleted.toFixed(2))
       };
     }
 
@@ -114,7 +107,7 @@ export class SimAzioneService {
         counterAttackRisk: -1,
         highRecovery: false,
         completionProbability: Number(completionProbability.toFixed(2)),
-        passesCompleted: Math.round(passesCompleted)
+        passesCompleted: Number(passesCompleted.toFixed(2))
       };
     }
 
@@ -125,10 +118,26 @@ export class SimAzioneService {
       counterAttackRisk: -1,
       highRecovery: false,
       completionProbability: Number(completionProbability.toFixed(2)),
-      passesCompleted: Math.round(passesCompleted)
+      passesCompleted: Number(passesCompleted.toFixed(2))
     };
   }
 
+
+  private calculatePassMultiplier(attackingTeam: TeamStats, defendingTeam: TeamStats): number {
+    const buildUp = attackingTeam.midfield * 0.5 + attackingTeam.playmaking * 0.5;
+    const pressure = defendingTeam.pressing * 0.5 + defendingTeam.defense * 0.5;
+
+    // Evitiamo divisioni per zero garantendo un valore minimo di pressione
+    const controlRatio = buildUp / Math.max(1, pressure);
+
+    // Curva logaritmica: a controlRatio = 1.0 restituisce esattamente 1.0
+    // Il fattore k (0.8) controlla la reattività del possesso al divario tecnico
+    const K_FACTOR = 0.8;
+    const logMultiplier = 1.0 + K_FACTOR * Math.log(controlRatio);
+
+    // Unico clamp di protezione per evitare valori negativi/assurdità (es. tra 0.2 e 2.5)
+    return this.clamp(logMultiplier, 0.2, 2.5);
+  }
   /**
    * Simula la ripartenza in contropiede.
    */

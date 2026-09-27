@@ -1,29 +1,29 @@
 REPORT VALIDAZIONE DETTAGLIATA COLONNE (StrengthRatio = 0)
-File sorgente: sim_batch_dataset_2026-09-26T17-19-21.csv
-Data verifica: 2026-09-26T17:20:37.853Z
+File sorgente: sim_batch_dataset_2026-09-27T06-14-47.csv
+Data verifica: 2026-09-27T06:15:04.381Z
 
 ----------------------------------------------------------------------------------------------------------------
 METRICA              | MEDIA A  | MEDIA B  | RANGE ATT (0->100)   | RANGE DIF (0->100)   | SIMM  | MONOT | ESITO
 ----------------------------------------------------------------------------------------------------------------
-Goals                | 1.92     | 1.92     | 1.32 -> 2.45         | 1.39 -> 2.45         | OK    | OK    | [ OK ]
-TotalXG              | 1.91     | 1.91     | 1.32 -> 2.44         | 1.38 -> 2.45         | OK    | OK    | [ OK ]
+Goals                | 1.91     | 1.92     | 1.31 -> 2.44         | 1.37 -> 2.46         | OK    | OK    | [ OK ]
+TotalXG              | 1.91     | 1.92     | 1.31 -> 2.44         | 1.37 -> 2.45         | OK    | OK    | [ OK ]
 XGPerShot            | 0.17     | 0.17     | 0.17 -> 0.17         | 0.16 -> 0.18         | OK    | OK    | [ OK ]
-PossessionShare      | 50.00    | 50.00    | 43.61 -> 55.73       | 49.52 -> 50.52       | OK    | OK    | [ OK ]
-ShotsTotal           | 11.02    | 11.01    | 7.50 -> 14.15        | 8.39 -> 13.52        | OK    | OK    | [ OK ]
-ShotsOnTarget        | 5.65     | 5.64     | 3.87 -> 7.25         | 4.26 -> 6.98         | OK    | OK    | [ OK ]
-ShotsBlocked         | 3.18     | 3.18     | 2.15 -> 4.08         | 2.46 -> 3.87         | OK    | OK    | [ OK ]
-ShotsWoodwork        | 0.54     | 0.55     | 0.36 -> 0.70         | 0.42 -> 0.66         | OK    | OK    | [ OK ]
-CornersWon           | 1.81     | 1.80     | 1.23 -> 2.33         | 1.38 -> 2.21         | OK    | OK    | [ OK ]
-LooseBallsWon        | 5.20     | 5.21     | 4.16 -> 6.16         | 4.55 -> 5.80         | OK    | OK    | [ OK ]
-PassesTotal          | 150.35   | 150.36   | 116.63 -> 182.73     | 146.05 -> 154.95     | OK    | OK    | [ OK ]
-PassesOpenPlay       | 118.97   | 119.00   | 82.96 -> 153.93      | 117.57 -> 120.21     | OK    | OK    | [ OK ]
-PassesCounterAttack  | 17.34    | 17.34    | 16.69 -> 18.00       | 13.96 -> 21.37       | OK    | OK    | [ OK ]
-PassesCorner         | 3.63     | 3.60     | 2.47 -> 4.65         | 2.77 -> 4.43         | OK    | OK    | [ OK ]
-PassesLooseBall      | 10.40    | 10.42    | 8.33 -> 12.32        | 9.10 -> 11.61        | OK    | OK    | [ OK ]
-XGOpenPlay           | 0.91     | 0.91     | 0.40 -> 1.36         | 0.69 -> 1.10         | OK    | OK    | [ OK ]
+PossessionShare      | 49.99    | 50.01    | 43.64 -> 55.67       | 49.51 -> 50.53       | OK    | OK    | [ OK ]
+ShotsTotal           | 10.99    | 11.02    | 7.45 -> 14.13        | 8.36 -> 13.51        | OK    | OK    | [ OK ]
+ShotsOnTarget        | 5.64     | 5.65     | 3.84 -> 7.25         | 4.25 -> 7.00         | OK    | OK    | [ OK ]
+ShotsBlocked         | 3.18     | 3.18     | 2.14 -> 4.09         | 2.44 -> 3.87         | OK    | OK    | [ OK ]
+ShotsWoodwork        | 0.54     | 0.54     | 0.37 -> 0.69         | 0.42 -> 0.66         | OK    | OK    | [ OK ]
+CornersWon           | 1.81     | 1.82     | 1.22 -> 2.33         | 1.39 -> 2.20         | OK    | OK    | [ OK ]
+LooseBallsWon        | 5.20     | 5.21     | 4.13 -> 6.18         | 4.53 -> 5.83         | OK    | OK    | [ OK ]
+PassesTotal          | 150.27   | 150.38   | 116.72 -> 182.41     | 145.95 -> 154.95     | KO    | OK    | [ KO ]
+PassesOpenPlay       | 118.94   | 119.02   | 83.02 -> 153.71      | 117.58 -> 120.11     | KO    | OK    | [ KO ]
+PassesCounterAttack  | 17.32    | 17.32    | 16.68 -> 17.99       | 13.99 -> 21.33       | OK    | OK    | [ OK ]
+PassesCorner         | 3.61     | 3.64     | 2.44 -> 4.66         | 2.79 -> 4.40         | OK    | OK    | [ OK ]
+PassesLooseBall      | 10.40    | 10.41    | 8.27 -> 12.37        | 9.06 -> 11.65        | OK    | OK    | [ OK ]
+XGOpenPlay           | 0.90     | 0.91     | 0.40 -> 1.35         | 0.69 -> 1.10         | OK    | OK    | [ OK ]
 XGCounterAttack      | 0.65     | 0.65     | 0.62 -> 0.67         | 0.41 -> 0.91         | OK    | OK    | [ OK ]
 XGCorner             | 0.15     | 0.15     | 0.10 -> 0.20         | 0.12 -> 0.19         | OK    | OK    | [ OK ]
-XGLooseBall          | 0.21     | 0.21     | 0.14 -> 0.27         | 0.16 -> 0.26         | OK    | OK    | [ OK ]
+XGLooseBall          | 0.21     | 0.21     | 0.14 -> 0.27         | 0.16 -> 0.25         | OK    | OK    | [ OK ]
 ----------------------------------------------------------------------------------------------------------------
-ESITO FINALE: 19/19 metriche superate. (0 KO)
+ESITO FINALE: 17/19 metriche superate. (2 KO)
 ----------------------------------------------------------------------------------------------------------------
