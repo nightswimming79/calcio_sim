@@ -4,9 +4,24 @@ import { LeagueService } from '../src/app/services/league.service';
 import { SimGameService } from '../src/app/services/sim-game.service';
 import { LeagueTeam } from '../src/app/league.model';
 import { SimAzioneService } from '../src/app/services/sim-azione.service';
+import { TeamStats } from '../src/app/sim.model';
 
 function pointsToStats(points: number): number {
     return points / 2 + 40;
+}
+
+// Istanziazione corretta della classe TeamStats tramite new
+function createStats(val: number): TeamStats {
+    return new TeamStats({
+        midfield: val,
+        playmaking: val,
+        attack: val,
+        defense: val,
+        pressing: val,
+        goalkeeper: val,
+        cornerAttack: val,
+        cornerDefense: val
+    });
 }
 
 function runLeagueBatch() {
@@ -17,25 +32,13 @@ function runLeagueBatch() {
     const simGameService = new SimGameService(simAzioneService);
     const leagueService = new LeagueService(simGameService);
 
-    // Helper per generare al volo i TeamStats omogenei
-    const createStats = (val: number) => ({
-        midfield: val,
-        playmaking: val,
-        attack: val,
-        defense: val,
-        pressing: val,
-        goalkeeper: val,
-        cornerAttack: val,
-        cornerDefense: val
-    });
-
     // Tattica standard fissa a 50 (convertita su scala 0.0 - 1.0)
     const defaultTactics = {
         verticality: 0.5,
         defensiveLine: 0.5
     };
 
-    // 2. Definizione delle 6 squadre
+    // 2. Definizione delle 20 squadre con TeamStats
     const teams: LeagueTeam[] = [
         { id: 'ARSENAL', name: 'Arsenal', stats: createStats(pointsToStats(85)), playstyle: defaultTactics },
         { id: 'MANCITY', name: 'Man City', stats: createStats(pointsToStats(78)), playstyle: defaultTactics },
@@ -59,7 +62,7 @@ function runLeagueBatch() {
         { id: 'WOLVES', name: 'Wolves', stats: createStats(pointsToStats(20)), playstyle: defaultTactics },
     ];
 
-    // 3. Esecuzione Campionato (Andata e Ritorno, 50 azioni per tempo = 100 totali)
+    // 3. Esecuzione Campionato
     const result = leagueService.playLeague(teams, 20, 200);
 
     // 4. Formattazione dell'output in formato testo

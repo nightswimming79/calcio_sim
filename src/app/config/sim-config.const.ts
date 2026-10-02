@@ -68,5 +68,17 @@ export const SIM_CONFIG = {
         SAVED_HELD_THRESHOLD: 0.76,   // <= 0.76: SAVED_HELD -> OPPONENT_POSSESSION
         POST_BAR_THRESHOLD: 0.82      // <= 0.82: POST_BAR_REBOUND -> LOOSE_BALL
         // > 0.82: OUT -> OPPONENT_POSSESSION
+    },
+
+    // --- MOLTIPLICATORI STATISTICHE SQUADRA ---
+    STAT_MULTIPLIERS: {
+        midfield: 1.35,
+        playmaking: 0.75,
+        attack: 1.24,
+        defense: 0.55,
+        pressing: 0.6,
+        goalkeeper: 1.0,
+        cornerAttack: 1.0,
+        cornerDefense: 1.0
     }
 };
