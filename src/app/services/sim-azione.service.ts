@@ -72,8 +72,13 @@ export class SimAzioneService {
       const isHighRecovery = d_def > cfgP.HIGH_RECOVERY_DEFENSIVE_LINE_THRESHOLD;
 
       const defenderWeight = cfgP.COUNTER_RISK_D_DEFENDER_WEIGHT ?? 0.3;
+      // Fattore verticalità progressivo senza IF:
+      // Con v = 0.5 -> (0.5 - 0.5)^2 * 1.5 = 0 -> rimane 'v' puro.
+      // Con v = 0.8 -> 0.8 + (0.3)^2 * 1.5 = 0.8 + 0.135 = 0.935 (impennata del rischio).
+      const vRiskFactor = v + Math.pow(v - 0.5, 2) * 1.5;
+
       const counterRisk = this.clamp(
-        (v * cfgP.COUNTER_RISK_V_WEIGHT + d * cfgP.COUNTER_RISK_D_WEIGHT + d_def * defenderWeight) * cfgP.COUNTER_RISK_MULTIPLIER,
+        (vRiskFactor * cfgP.COUNTER_RISK_V_WEIGHT + d * cfgP.COUNTER_RISK_D_WEIGHT + d_def * defenderWeight) * cfgP.COUNTER_RISK_MULTIPLIER,
         0,
         1
       );
@@ -143,25 +148,36 @@ export class SimAzioneService {
    */
   public simulateCounterAttack(input: CounterAttackInput): CounterAttackResult {
     const cfgC = SIM_CONFIG.COUNTER_ATTACK;
-    const risk = this.clamp(input.counterAttackRisk ?? 0.5, 0.1, 1.0);
 
-    // Recuperiamo la linea difensiva di chi subisce il contropiede (se presente nell'input)
-    const d_defender = this.clamp(input.defendingPlaystyle?.defensiveLine ?? 0.5, 0, 1);
+    // Normalizzazione matematica pura senza IF / ??:
+    // Se input.counterAttackRisk è undefined/NaN, la moltiplicazione con 0.5 ne garantisce il valore di fallback
+    const rawInput = Number(input.counterAttackRisk);
+    const validRisk = this.clamp(isNaN(rawInput) ? 0.5 : rawInput, 0.1, 1.0);
+
+    // Recupero linea difensiva pulito
+    const d_defender = this.clamp(Number(input.defendingPlaystyle?.defensiveLine), 0, 1);
+
+    // Trasformazione esponenziale continua:
+    // Con risk = 0.5 -> 0.5 * 0.5 * 2.0 = 0.5 (Comportamento IDENTICO ad ora)
+    // Con risk = 0.8 -> 0.8 * 0.8 * 2.0 = 1.28 -> clamped a 1.0 (Impatto devastante su V8)
+    const risk = this.clamp(validRisk * validRisk * 2.0, 0.1, 1.0);
 
     const passesCompleted = Math.floor(
       this.clamp(2 + risk * 2, cfgC.PASSES_MIN, cfgC.PASSES_MAX)
     );
 
     const roll = Math.random();
-    // La probabilità di andare al tiro sale con il rischio e con la linea alta avversaria
-    const breakthroughProb = cfgC.BREAKTHROUGH_BASE + risk * 0.4 + d_defender * 0.1;
+
+    // La probabilità di penetrazione cresce quadraticamente con il rischio
+    const breakthroughProb = cfgC.BREAKTHROUGH_BASE + (risk * risk) * 0.6 + d_defender * 0.1;
     const isShot = roll < breakthroughProb;
 
     if (isShot) {
-      // Moltiplicatore di campo aperto: più la difesa subente è alta (d_defender), più l'xG è elevato
-      const lineMultiplier = 0.85 + d_defender * 0.3; // da 0.85 (linea 0) a 1.15 (linea 100)
+      const lineMultiplier = 0.85 + d_defender * 0.3;
+
+      // L'xG generato scala col quadrato del rischio
       const generatedXG = Number(
-        (cfgC.DEFAULT_COUNTER_XG * (0.8 + risk * 0.5) * lineMultiplier).toFixed(2)
+        (cfgC.DEFAULT_COUNTER_XG * (0.5 + (risk * risk) * 1.0) * lineMultiplier).toFixed(2)
       );
 
       return {
@@ -290,16 +306,21 @@ export class SimAzioneService {
 
   // --- HELPER PRIVATI DI CALCOLO ---
 
+  // --- HELPER PRIVATI DI CALCOLO ---
+
   private calculateCompletionProbability(att: TeamStats, def: TeamStats, v: number, d: number): number {
     // Potenziale di palleggio dell'attacco vs Capacità di pressione/intercetto della difesa
     const buildUpQuality = att.playmaking * 0.6 + att.midfield * 0.4;
     const defensivePressure = def.pressing * 0.6 + def.defense * 0.4;
 
-    // Scontro diretto tra gli attributi (senza variabili sintetiche)
-    // A parità di attributi (es. 80 vs 80), (buildUpQuality - defensivePressure) = 0 -> baseProb = 0.70
+    // Scontro diretto tra gli attributi
     const baseProb = 0.70 + (buildUpQuality - defensivePressure) / 100;
 
-    return this.clamp(baseProb - v * 0.15 + d * 0.05, 0.30, 0.95);
+    // Con v = 0.5 il malus rimane esattamente -0.075 (invariato rispetto a prima)
+    // Se v > 0.5 la penalizzazione cresce più velocemente per simulare i rischiosi lanci lunghi/forzature
+    const verticalityPenalty = 0.075 + (v - 0.5) * 0.35;
+
+    return this.clamp(baseProb - verticalityPenalty + d * 0.05, 0.30, 0.95);
   }
 
 

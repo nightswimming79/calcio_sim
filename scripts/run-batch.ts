@@ -5,16 +5,6 @@ import * as path from 'path';
 import { SIM_CONFIG } from '../src/app/config/sim-config.const';
 
 // Interfacce reali del progetto
-export interface TeamStats {
-    midfield: number;      // 0 - 100
-    playmaking: number;     // 0 - 100
-    attack: number;         // 0 - 100
-    defense: number;        // 0 - 100
-    pressing: number;       // 0 - 100
-    goalkeeper: number;     // 0 - 100
-    cornerAttack: number;   // 0 - 100
-    cornerDefense: number;  // 0 - 100
-}
 
 export interface PlaystyleConfig {
     verticality: number;    // 0.0 - 1.0
@@ -32,6 +22,7 @@ export interface GameSequenceInput {
 // Import dei servizi reali della simulazione
 import { SimAzioneService } from '../src/app/services/sim-azione.service';
 import { SimGameService } from '../src/app/services/sim-game.service';
+import { TeamStats } from '../src/app/sim.model';
 
 // --- CONFIGURAZIONE RANGE BATCH ---
 const ITERATIONS_PER_SCENARIO = 1000;
@@ -87,7 +78,7 @@ async function executeBatch() {
                         const ratingA = Math.min(100, Math.max(0, BASE_STATS_VALUE + strDelta));
                         const ratingB = 100 - ratingA;
 
-                        const teamA: TeamStats = {
+                        const teamA = new TeamStats({
                             midfield: ratingA,
                             playmaking: ratingA,
                             attack: ratingA,
@@ -96,9 +87,9 @@ async function executeBatch() {
                             goalkeeper: ratingA,
                             cornerAttack: ratingA,
                             cornerDefense: ratingA
-                        };
+                        });
 
-                        const teamB: TeamStats = {
+                        const teamB = new TeamStats({
                             midfield: ratingB,
                             playmaking: ratingB,
                             attack: ratingB,
@@ -107,7 +98,7 @@ async function executeBatch() {
                             goalkeeper: ratingB,
                             cornerAttack: ratingB,
                             cornerDefense: ratingB
-                        };
+                        });
 
                         // Conversione parametri tattici da scala 0-100 a scala 0.0-1.0 per l'engine
                         const input: GameSequenceInput = {

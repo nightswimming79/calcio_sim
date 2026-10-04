@@ -35,6 +35,13 @@ export interface StandingEntry {
     xgFor: number;
     xgAgainst: number;
     xgDifference: number;
+
+    // NUOVI CAMPI STATISTICI:
+    actionsFor: number;
+    actionsAgainst: number;
+    possessionPct: number;
+    counterXgFor: number;
+    counterXgAgainst: number;
 }
 
 export interface LeagueResult {

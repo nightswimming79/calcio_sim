@@ -12,7 +12,9 @@
     "verify-strength": "tsx scripts/run-verify-strength.ts",
     "matrix": "tsx scripts/run-generate-matrix.ts",
     "league": "tsx scripts/run-league-batch.ts",
-    "league-stats": "tsx scripts/run-league-stats-batch.ts"
+    "league-stats": "tsx scripts/run-league-stats-batch.ts",
+    "league:debug": "tsx --inspect scripts/run-league-batch.ts",
+    "league-stats:debug": "tsx --inspect scripts/run-league-stats-batch.ts"
   },
   "private": true,
   "dependencies": {
