@@ -59,12 +59,12 @@ export class SimAzioneService {
 
     // --- PASSAGGI CONTINUI CON CURVA LOGARITMICA ---
     const basePasses = cfgP.BASE_PASSES_MAX - v * cfgP.PASSES_VERTICALITY_WEIGHT;
-    const strengthPassMultiplier = this.calculatePassMultiplier(attackingTeam, defendingTeam);
+    const strengthPassMultiplier = this.calculatePassMultiplier(attackingTeam, defendingTeam, input.currentPassSequence);
 
     // Passaggi espressi in decimale continuo per evitare gradini nei calcoli aggregati
     const passesCompleted = basePasses * strengthPassMultiplier;
 
-    const completionProbability = this.calculateCompletionProbability(attackingTeam, defendingTeam, v, d);
+    const completionProbability = this.calculateCompletionProbability(attackingTeam, defendingTeam, v, d, input.currentPassSequence);
     const roll = Math.random();
 
     // ESITO 1: PALLA PERSA / RISCHIO CONTROPIEDE
@@ -94,8 +94,19 @@ export class SimAzioneService {
     }
 
     // ESITO 2: SFONDAMENTO / OCCASIONE CREATA
+    // 1. La verticalità (v) sfrutta la difesa ALTA dell'avversario (d_def):
+    //    Se il difensore ha d_def = 0.8, l'attaccante ha più spazio per imbucare.
+    //    Se il difensore ha d_def = 0.2, c'è un "muro" che riduce lo sfondamento.
+    const spaceToExploit = (d_def - 0.5) * 0.35;
+
+    // 2. La propria linea alta (d_att) dà un piccolo contributo di accompagnamento alla manovra
+    const supportFromBehind = (d - 0.5) * 0.10;
+
     const chanceToBreakThrough = this.clamp(
-      cfgP.BREAKTHROUGH_BASE + v * cfgP.BREAKTHROUGH_V_WEIGHT + (v * d * cfgP.BREAKTHROUGH_VD_WEIGHT),
+      cfgP.BREAKTHROUGH_BASE
+      + v * cfgP.BREAKTHROUGH_V_WEIGHT
+      + spaceToExploit
+      + supportFromBehind,
       cfgP.BREAKTHROUGH_MIN,
       cfgP.BREAKTHROUGH_MAX
     );
@@ -127,9 +138,13 @@ export class SimAzioneService {
     };
   }
 
-
-  private calculatePassMultiplier(attackingTeam: TeamStats, defendingTeam: TeamStats): number {
-    const buildUp = attackingTeam.midfield * 0.5 + attackingTeam.playmaking * 0.5;
+  private calculatePassMultiplier(
+    attackingTeam: TeamStats,
+    defendingTeam: TeamStats,
+    currentPassSequence: number
+  ): number {
+    const dynamicPlaymaking = attackingTeam.getPlaymaking(currentPassSequence);
+    const buildUp = attackingTeam.midfield * 0.5 + dynamicPlaymaking * 0.5;
     const pressure = defendingTeam.pressing * 0.5 + defendingTeam.defense * 0.5;
 
     // Evitiamo divisioni per zero garantendo un valore minimo di pressione
@@ -149,18 +164,13 @@ export class SimAzioneService {
   public simulateCounterAttack(input: CounterAttackInput): CounterAttackResult {
     const cfgC = SIM_CONFIG.COUNTER_ATTACK;
 
-    // Normalizzazione matematica pura senza IF / ??:
-    // Se input.counterAttackRisk è undefined/NaN, la moltiplicazione con 0.5 ne garantisce il valore di fallback
     const rawInput = Number(input.counterAttackRisk);
     const validRisk = this.clamp(isNaN(rawInput) ? 0.5 : rawInput, 0.1, 1.0);
 
-    // Recupero linea difensiva pulito
     const d_defender = this.clamp(Number(input.defendingPlaystyle?.defensiveLine), 0, 1);
 
-    // Trasformazione esponenziale continua:
-    // Con risk = 0.5 -> 0.5 * 0.5 * 2.0 = 0.5 (Comportamento IDENTICO ad ora)
-    // Con risk = 0.8 -> 0.8 * 0.8 * 2.0 = 1.28 -> clamped a 1.0 (Impatto devastante su V8)
-    const risk = this.clamp(validRisk * validRisk * 2.0, 0.1, 1.0);
+    // 1. Rischio scalato in modo lineare anziché quadratico
+    const risk = this.clamp(validRisk * 1.1, 0.1, 1.0);
 
     const passesCompleted = Math.floor(
       this.clamp(2 + risk * 2, cfgC.PASSES_MIN, cfgC.PASSES_MAX)
@@ -168,16 +178,18 @@ export class SimAzioneService {
 
     const roll = Math.random();
 
-    // La probabilità di penetrazione cresce quadraticamente con il rischio
-    const breakthroughProb = cfgC.BREAKTHROUGH_BASE + (risk * risk) * 0.6 + d_defender * 0.1;
+    // 2. Probabilità di penetrazione smorzata (max ~0.55 - 0.65 anziché >0.85)
+    const breakthroughProb = cfgC.BREAKTHROUGH_BASE + risk * 0.25 + d_defender * 0.1;
     const isShot = roll < breakthroughProb;
 
     if (isShot) {
-      const lineMultiplier = 0.85 + d_defender * 0.3;
+      const lineMultiplier = 0.85 + d_defender * 0.25;
 
-      // L'xG generato scala col quadrato del rischio
+      // 3. xG da contropiede proporzionato al rischio senza moltiplicatori quadratici
+
+
       const generatedXG = Number(
-        (cfgC.DEFAULT_COUNTER_XG * (0.5 + (risk * risk) * 1.0) * lineMultiplier).toFixed(2)
+        (cfgC.DEFAULT_COUNTER_XG * (0.65 + risk * 0.35) * lineMultiplier).toFixed(2)
       );
 
       return {
@@ -196,14 +208,16 @@ export class SimAzioneService {
       passesCompleted
     };
   }
+
+
   /**
    * Calcola l'xG finale e l'esito specifico del tiro attingendo le soglie direttamente da SIM_CONFIG.
    */
   public calculateShotXG(input: ShotXGInput): ExtendedShotXGResult {
     // A pari forza (es. 0.5 vs 0.5), il prodotto fa 1.0 (baseXG resta INVARIATO a SR=0)
     // Il divario individuale sposta la qualità del tiro con una pendenza più morbida (+/- 15%)
-    const attackerBonus = 0.53 + (input.attacker - 0.5) * 0.0;
-    const defenderPenalty = 1.51 - (input.defender - 0.5) * 0.0;
+    const attackerBonus = 0.53 + (input.attacker - 0.5) * 0.2;
+    const defenderPenalty = 1.51 - (input.defender - 0.5) * 0.2;
     const finalXG = this.clamp(
       input.baseXG * attackerBonus * defenderPenalty,
       0.01,
@@ -308,9 +322,10 @@ export class SimAzioneService {
 
   // --- HELPER PRIVATI DI CALCOLO ---
 
-  private calculateCompletionProbability(att: TeamStats, def: TeamStats, v: number, d: number): number {
-    // Potenziale di palleggio dell'attacco vs Capacità di pressione/intercetto della difesa
-    const buildUpQuality = att.playmaking * 0.6 + att.midfield * 0.4;
+  private calculateCompletionProbability(att: TeamStats, def: TeamStats, v: number, d: number, currentPassSequence: number = 0): number {
+    // Potenziale di palleggio dell'attacco basato sul numero di passaggi completati nella sequenza in corso
+    const dynamicPlaymaking = att.getPlaymaking(currentPassSequence);
+    const buildUpQuality = dynamicPlaymaking * 0.6 + att.midfield * 0.4;
     const defensivePressure = def.pressing * 0.6 + def.defense * 0.4;
 
     // Scontro diretto tra gli attributi
@@ -328,6 +343,15 @@ export class SimAzioneService {
     const attQual = att.attack * 0.6 + att.playmaking * 0.4;
     const defQual = def.defense * 0.7 + def.pressing * 0.3;
     const baseXG = SIM_CONFIG.POSSESSION.DEFAULT_OPEN_PLAY_XG;
-    return this.clamp(baseXG * (attQual / Math.max(1, defQual)), 0.03, 0.50);
+
+    // Modificatore basato sulla linea difensiva d:
+    // d = 0.5 -> 1.00 (invariato)
+    // d = 0.8 -> 1.15 (linea alta concedente più spazio tra le linee)
+    // d = 0.2 -> 0.85 (densità difensiva in area, tiri più contestati)
+    const defensiveLineFactor = 0.75 + d * 0.5;
+
+    const rawXG = baseXG * (attQual / Math.max(1, defQual)) * defensiveLineFactor;
+
+    return this.clamp(rawXG, 0.03, 0.50);
   }
 }

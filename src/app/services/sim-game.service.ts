@@ -53,6 +53,27 @@ export class SimGameService {
     onCounter: () => void
   ): void {
     let currentPossession: 'A' | 'B' = startingTeam;
+    let currentPassSequence = 0;
+
+    // Helper interno per registrare i passaggi e aggiornare il record di sequenza massima
+    const addPasses = (team: 'A' | 'B', count: number, state: 'openPlay' | 'counterAttack' | 'corner' | 'looseBall') => {
+      const stats = team === 'A' ? statsA : statsB;
+      stats.passesByState[state] += count;
+      stats.passesByState.total += count;
+
+      currentPassSequence += count;
+      if (currentPassSequence > stats.passesByState.maxPassSequence) {
+        stats.passesByState.maxPassSequence = currentPassSequence;
+      }
+    };
+
+    // Helper per gestire il cambio palla (resetta la sequenza in corso)
+    const switchPossession = (newPossession: 'A' | 'B') => {
+      if (currentPossession !== newPossession) {
+        currentPossession = newPossession;
+        currentPassSequence = 0;
+      }
+    };
 
     for (let i = 0; i < N; i++) {
       const attackingTeam = currentPossession;
@@ -70,12 +91,12 @@ export class SimGameService {
         attackingTeam: attTeamData,
         defendingTeam: defTeamData,
         attackingPlaystyle: attPlaystyle,
-        defendingPlaystyle: defPlaystyle
+        defendingPlaystyle: defPlaystyle,
+        currentPassSequence: currentPassSequence
       });
 
       const passes = possessionResult.passesCompleted ?? 1;
-      currentStatsAtt.passesByState.openPlay += passes;
-      currentStatsAtt.passesByState.total += passes;
+      addPasses(attackingTeam, passes, 'openPlay');
 
       switch (possessionResult.outcome) {
         case 'CHANCE_CREATED': {
@@ -89,7 +110,7 @@ export class SimGameService {
 
           this.recordShot(currentStatsAtt, shotResult, 'openPlay');
 
-          currentPossession = this.resolveNextStateAfterShot(
+          const nextPossession = this.resolveNextStateAfterShot(
             shotResult.nextState,
             attackingTeam,
             defendingTeam,
@@ -99,13 +120,19 @@ export class SimGameService {
             statsB,
             onCorner,
             onLooseBall,
-            onCounter
+            onCounter,
+            addPasses
           );
+
+          switchPossession(nextPossession);
           break;
         }
 
         case 'COUNTER_ATTACK_RISK': {
           onCounter();
+
+          // Cambio palla a favore della difesa che recupera in contropiede
+          switchPossession(defendingTeam);
 
           const counterResult = this.simAzioneService.simulateCounterAttack({
             attackingTeam: defTeamData,
@@ -117,8 +144,7 @@ export class SimGameService {
           });
 
           const counterPasses = counterResult.passesCompleted ?? 1;
-          currentStatsDef.passesByState.counterAttack += counterPasses;
-          currentStatsDef.passesByState.total += counterPasses;
+          addPasses(defendingTeam, counterPasses, 'counterAttack');
 
           if (counterResult.outcome === 'COUNTER_SHOT' || counterResult.outcome === 'COUNTER_CHANCE_CREATED') {
             const cfgShot = SIM_CONFIG.SHOT;
@@ -131,7 +157,7 @@ export class SimGameService {
 
             this.recordShot(currentStatsDef, shotResult, 'counterAttack');
 
-            currentPossession = this.resolveNextStateAfterShot(
+            const nextPossession = this.resolveNextStateAfterShot(
               shotResult.nextState,
               defendingTeam,
               attackingTeam,
@@ -141,18 +167,23 @@ export class SimGameService {
               statsB,
               onCorner,
               onLooseBall,
-              onCounter
+              onCounter,
+              addPasses
             );
+
+            switchPossession(nextPossession);
           } else {
-            currentPossession = defendingTeam;
+            switchPossession(defendingTeam);
           }
           break;
         }
 
         case 'POSSESSION_RETAINED':
-        default:
-          currentPossession = possessionResult.currentPossession ?? defendingTeam;
+        default: {
+          const nextPossession = possessionResult.currentPossession ?? defendingTeam;
+          switchPossession(nextPossession);
           break;
+        }
       }
     }
   }
@@ -192,7 +223,8 @@ export class SimGameService {
     statsB: TeamSequenceStats,
     onCorner: () => void,
     onLooseBall: () => void,
-    onCounter: () => void
+    onCounter: () => void,
+    addPasses: (team: 'A' | 'B', count: number, state: 'openPlay' | 'counterAttack' | 'corner' | 'looseBall') => void
   ): 'A' | 'B' {
 
     const currentStatsAtt = attackingTeam === 'A' ? statsA : statsB;
@@ -210,8 +242,7 @@ export class SimGameService {
         goalkeeperExit: defTeamData.goalkeeper / SIM_CONFIG.SHOT.STAT_DIVISOR
       });
 
-      currentStatsAtt.passesByState.corner += cfgCorner.PASSES_COUNT;
-      currentStatsAtt.passesByState.total += cfgCorner.PASSES_COUNT;
+      addPasses(attackingTeam, cfgCorner.PASSES_COUNT, 'corner');
 
       if (cornerResult.outcome === 'CORNER_SHOT') {
         const cornerShotResult = this.simAzioneService.calculateShotXG({
@@ -227,17 +258,18 @@ export class SimGameService {
         onCounter();
         return defendingTeam;
       } else if (cornerResult.outcome === 'CORNER_CLEARED_LOOSE') {
-        return this.resolveLooseBall(attackingTeam, defendingTeam, input, statsA, statsB, onLooseBall, onCounter);
+        return this.resolveLooseBall(attackingTeam, defendingTeam, input, statsA, statsB, onLooseBall, onCounter, addPasses);
       }
       return defendingTeam;
     }
 
     if (nextState === 'LOOSE_BALL') {
-      return this.resolveLooseBall(attackingTeam, defendingTeam, input, statsA, statsB, onLooseBall, onCounter);
+      return this.resolveLooseBall(attackingTeam, defendingTeam, input, statsA, statsB, onLooseBall, onCounter, addPasses);
     }
 
     return defendingTeam;
   }
+
   private resolveLooseBall(
     attackingTeam: 'A' | 'B',
     defendingTeam: 'A' | 'B',
@@ -245,12 +277,12 @@ export class SimGameService {
     statsA: TeamSequenceStats,
     statsB: TeamSequenceStats,
     onLooseBall: () => void,
-    onCounter: () => void
+    onCounter: () => void,
+    addPasses: (team: 'A' | 'B', count: number, state: 'openPlay' | 'counterAttack' | 'corner' | 'looseBall') => void
   ): 'A' | 'B' {
     onLooseBall();
 
     const currentStatsAtt = attackingTeam === 'A' ? statsA : statsB;
-    const currentStatsDef = defendingTeam === 'A' ? statsA : statsB;
 
     const attTeamData = attackingTeam === 'A' ? input.teamA : input.teamB;
     const defTeamData = defendingTeam === 'A' ? input.teamA : input.teamB;
@@ -265,8 +297,7 @@ export class SimGameService {
 
     if (looseResult.outcome === 'REBOUND_SHOT') {
       currentStatsAtt.looseBallsWon++;
-      currentStatsAtt.passesByState.looseBall += cfgLB.PASSES_COUNT;
-      currentStatsAtt.passesByState.total += cfgLB.PASSES_COUNT;
+      addPasses(attackingTeam, cfgLB.PASSES_COUNT, 'looseBall');
 
       const reboundShotResult = this.simAzioneService.calculateShotXG({
         baseXG: looseResult.generatedBaseXG ?? cfgLB.DEFAULT_REBOUND_XG,
@@ -279,19 +310,18 @@ export class SimGameService {
       return defendingTeam;
     } else if (looseResult.outcome === 'ATTACK_RETAINED') {
       currentStatsAtt.looseBallsWon++;
-      currentStatsAtt.passesByState.looseBall += cfgLB.PASSES_COUNT;
-      currentStatsAtt.passesByState.total += cfgLB.PASSES_COUNT;
+      addPasses(attackingTeam, cfgLB.PASSES_COUNT, 'looseBall');
       return attackingTeam;
     } else if (looseResult.outcome === 'DEFENSE_CLEARED_LONG') {
+      const currentStatsDef = defendingTeam === 'A' ? statsA : statsB;
       currentStatsDef.looseBallsWon++;
-      currentStatsDef.passesByState.looseBall += cfgLB.PASSES_COUNT;
-      currentStatsDef.passesByState.total += cfgLB.PASSES_COUNT;
+      addPasses(defendingTeam, cfgLB.PASSES_COUNT, 'looseBall');
       onCounter();
       return defendingTeam;
     } else {
+      const currentStatsDef = defendingTeam === 'A' ? statsA : statsB;
       currentStatsDef.looseBallsWon++;
-      currentStatsDef.passesByState.looseBall += cfgLB.PASSES_COUNT;
-      currentStatsDef.passesByState.total += cfgLB.PASSES_COUNT;
+      addPasses(defendingTeam, cfgLB.PASSES_COUNT, 'looseBall');
       return defendingTeam;
     }
   }
@@ -303,7 +333,7 @@ export class SimGameService {
       xgPerShot: 0,
       possessionSharePercent: 50,
       xgByState: { openPlay: 0, counterAttack: 0, corner: 0, looseBall: 0 },
-      passesByState: { openPlay: 0, counterAttack: 0, corner: 0, looseBall: 0, total: 0 },
+      passesByState: { openPlay: 0, counterAttack: 0, corner: 0, looseBall: 0, total: 0, maxPassSequence: 0 },
       shots: { total: 0, onTarget: 0, blocked: 0, woodwork: 0 },
       cornersWon: 0,
       looseBallsWon: 0

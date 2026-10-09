@@ -42,6 +42,7 @@ export interface StandingEntry {
     possessionPct: number;
     counterXgFor: number;
     counterXgAgainst: number;
+    maxPassSequence: number;
 }
 
 export interface LeagueResult {

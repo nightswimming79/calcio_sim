@@ -39,7 +39,8 @@ export class LeagueService {
         actionsAgainst: 0,
         possessionPct: 0,
         counterXgFor: 0,
-        counterXgAgainst: 0
+        counterXgAgainst: 0,
+        maxPassSequence: 0
       });
     });
 
@@ -115,14 +116,12 @@ export class LeagueService {
     away.goalsFor += match.awayGoals;
     away.goalsAgainst += match.homeGoals;
 
-    home.xgFor += match.homeXG;
-    home.xgAgainst += match.awayXG;
-    away.xgFor += match.awayXG;
-    away.xgAgainst += match.homeXG;
+    home.xgFor = Number((home.xgFor + (match.homeXG || 0)).toFixed(2));
+    home.xgAgainst = Number((home.xgAgainst + (match.awayXG || 0)).toFixed(2));
+    away.xgFor = Number((away.xgFor + (match.awayXG || 0)).toFixed(2));
+    away.xgAgainst = Number((away.xgAgainst + (match.awayXG || 0)).toFixed(2));
 
-    // --- ACCUMULO NUOVE METRICHE ---
-    // Azioni fatte e subite
-    // --- ACCUMULO METRICHE (Mapping Corretto) ---
+    // --- ACCUMULO METRICHE ---
     // Total Passi / Azioni
     home.actionsFor += seq.statsA.passesByState?.total ?? 0;
     home.actionsAgainst += seq.statsB.passesByState?.total ?? 0;
@@ -138,6 +137,10 @@ export class LeagueService {
     home.counterXgAgainst += seq.statsB.xgByState?.counterAttack ?? 0;
     away.counterXgFor += seq.statsB.xgByState?.counterAttack ?? 0;
     away.counterXgAgainst += seq.statsA.xgByState?.counterAttack ?? 0;
+
+    // Record sequenza massima di passaggi registrata nella singola partita
+    home.maxPassSequence = Math.max(home.maxPassSequence, seq.statsA.passesByState?.maxPassSequence ?? 0);
+    away.maxPassSequence = Math.max(away.maxPassSequence, seq.statsB.passesByState?.maxPassSequence ?? 0);
 
     if (match.homeGoals > match.awayGoals) {
       home.won += 1;

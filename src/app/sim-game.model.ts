@@ -27,6 +27,7 @@ export interface TeamSequenceStats {
         corner: number;
         looseBall: number;
         total: number;
+        maxPassSequence: number; // <--- NUOVO CAMPO
     };
     shots: {
         total: number;

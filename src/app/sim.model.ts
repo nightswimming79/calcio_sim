@@ -4,6 +4,11 @@
 
 import { SIM_CONFIG } from "./config/sim-config.const";
 
+export interface PassingScheme {
+  // Esempio di mappa: { 1: 1.0, 5: 1.05, 10: 1.20, 15: 1.40 }
+  passThresholds: Record<number, number>;
+}
+
 export interface TeamStatsInit {
   midfield: number;
   playmaking: number;
@@ -16,6 +21,22 @@ export interface TeamStatsInit {
 }
 
 export class TeamStats {
+
+  private static defaultScheme: PassingScheme = {
+    passThresholds: {
+      0: 1.00,
+      3: 1.01,
+      6: 1.03,
+      9: 1.05,
+      12: 1.08,
+      15: 1.12,
+      18: 1.16,
+      21: 1.20,
+      25: 1.25
+    }
+  };
+  public schemes: PassingScheme = TeamStats.defaultScheme;
+
   private _midfield: number;
   private _playmaking: number;
   private _attack: number;
@@ -45,8 +66,15 @@ export class TeamStats {
   get midfield(): number {
     return this.calc(this._midfield, SIM_CONFIG.STAT_MULTIPLIERS.midfield);
   }
-  get playmaking(): number {
-    return this.calc(this._playmaking, SIM_CONFIG.STAT_MULTIPLIERS.playmaking);
+  /**
+   * Calcola il valore di Playmaking dinamico in base alla sequenza di passaggi in corso
+   * @param currentPasses Numero di passaggi accumulati nella sequenza attiva
+   */
+  public getPlaymaking(currentPasses: number): number {
+    const multiplier = this.getPassingMultiplier(currentPasses);
+    const baseMultiplier = SIM_CONFIG.STAT_MULTIPLIERS.playmaking;
+
+    return this.calc(this._playmaking, baseMultiplier * multiplier);
   }
   get attack(): number {
     return this.calc(this._attack, SIM_CONFIG.STAT_MULTIPLIERS.attack);
@@ -76,6 +104,24 @@ export class TeamStats {
   get baseGoalkeeper(): number { return this._goalkeeper; }
   get baseCornerAttack(): number { return this._cornerAttack; }
   get baseCornerDefense(): number { return this._cornerDefense; }
+
+
+  /**
+   * Helper privato per estrarre il moltiplicatore dalla tabella degli schemi
+   */
+  private getPassingMultiplier(passes: number): number {
+    const thresholds = Object.keys(this.schemes.passThresholds)
+      .map(Number)
+      .sort((a, b) => b - a); // Ordine decrescente
+
+    // Trova la soglia massima raggiunta (es. se passes = 12, prende la soglia 10)
+    for (const threshold of thresholds) {
+      if (passes >= threshold) {
+        return this.schemes.passThresholds[threshold];
+      }
+    }
+    return 1.0;
+  }
 }
 
 export interface PlaystyleConfig {
@@ -94,6 +140,7 @@ export interface SimulationInput {
   attackingPlaystyle?: PlaystyleConfig;
   defendingPlaystyle?: PlaystyleConfig;
   playstyle?: PlaystyleConfig;
+  currentPassSequence: number;
 }
 
 export type ActionOutcome = 'CHANCE_CREATED' | 'COUNTER_ATTACK_RISK' | 'POSSESSION_RETAINED' | 'POSSESSION_LOST';
