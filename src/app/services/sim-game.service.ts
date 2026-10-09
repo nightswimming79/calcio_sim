@@ -26,6 +26,8 @@ export class SimGameService {
     const onLooseBall = () => looseBallsCount++;
     const onCounter = () => counterAttacksCount++;
 
+    const cfgG = SIM_CONFIG.GAME_SERVICE;
+
     // PRIMO TEMPO
     this.runHalfTime(N, 'A', input, statsA, statsB, onCorner, onLooseBall, onCounter);
 
@@ -35,7 +37,7 @@ export class SimGameService {
     this.finalizeTeamStats(statsA, statsB);
 
     return {
-      totalActions: N * 2,
+      totalActions: N * cfgG.SIMULATESEQUENCE_HALFTIME_DIVISOR,
       sequenceDetails: { counterAttacksCount, cornersCount, looseBallsCount },
       statsA,
       statsB
@@ -54,6 +56,8 @@ export class SimGameService {
   ): void {
     let currentPossession: 'A' | 'B' = startingTeam;
     let currentPassSequence = 0;
+
+    const cfgG = SIM_CONFIG.GAME_SERVICE;
 
     // Helper interno per registrare i passaggi e aggiornare il record di sequenza massima
     const addPasses = (team: 'A' | 'B', count: number, state: 'openPlay' | 'counterAttack' | 'corner' | 'looseBall') => {
@@ -95,7 +99,7 @@ export class SimGameService {
         currentPassSequence: currentPassSequence
       });
 
-      const passes = possessionResult.passesCompleted ?? 1;
+      const passes = possessionResult.passesCompleted ?? cfgG.RUNHALFTIME_DEFAULT_PASSES_FALLBACK;
       addPasses(attackingTeam, passes, 'openPlay');
 
       switch (possessionResult.outcome) {
@@ -143,7 +147,7 @@ export class SimGameService {
             highRecovery: possessionResult.highRecovery
           });
 
-          const counterPasses = counterResult.passesCompleted ?? 1;
+          const counterPasses = counterResult.passesCompleted ?? cfgG.RUNHALFTIME_DEFAULT_PASSES_FALLBACK;
           addPasses(defendingTeam, counterPasses, 'counterAttack');
 
           if (counterResult.outcome === 'COUNTER_SHOT' || counterResult.outcome === 'COUNTER_CHANCE_CREATED') {
@@ -289,6 +293,8 @@ export class SimGameService {
     const defPlaystyle = defendingTeam === 'A' ? input.playstyleA : input.playstyleB;
 
     const cfgLB = SIM_CONFIG.LOOSE_BALL;
+    const cfgG = SIM_CONFIG.GAME_SERVICE;
+
     const looseResult = this.simAzioneService.simulateLooseBall({
       attackerReactivity: (attTeamData.pressing * cfgLB.ATTACKER_PRESSING_WEIGHT + attTeamData.attack * cfgLB.ATTACKER_ATTACK_WEIGHT) / SIM_CONFIG.SHOT.STAT_DIVISOR,
       defenderReactivity: (defTeamData.defense * cfgLB.DEFENDER_DEFENSE_WEIGHT + defTeamData.pressing * cfgLB.DEFENDER_PRESSING_WEIGHT) / SIM_CONFIG.SHOT.STAT_DIVISOR,
@@ -297,7 +303,7 @@ export class SimGameService {
 
     if (looseResult.outcome === 'REBOUND_SHOT') {
       currentStatsAtt.looseBallsWon++;
-      addPasses(attackingTeam, cfgLB.PASSES_COUNT, 'looseBall');
+      addPasses(attackingTeam, cfgG.RESOLVELOOSEBALL_REBOUND_PASSES, 'looseBall');
 
       const reboundShotResult = this.simAzioneService.calculateShotXG({
         baseXG: looseResult.generatedBaseXG ?? cfgLB.DEFAULT_REBOUND_XG,
@@ -310,28 +316,29 @@ export class SimGameService {
       return defendingTeam;
     } else if (looseResult.outcome === 'ATTACK_RETAINED') {
       currentStatsAtt.looseBallsWon++;
-      addPasses(attackingTeam, cfgLB.PASSES_COUNT, 'looseBall');
+      addPasses(attackingTeam, cfgG.RESOLVELOOSEBALL_ATTACK_RETAINED_PASSES, 'looseBall');
       return attackingTeam;
     } else if (looseResult.outcome === 'DEFENSE_CLEARED_LONG') {
       const currentStatsDef = defendingTeam === 'A' ? statsA : statsB;
       currentStatsDef.looseBallsWon++;
-      addPasses(defendingTeam, cfgLB.PASSES_COUNT, 'looseBall');
+      addPasses(defendingTeam, cfgG.RESOLVELOOSEBALL_CLEARANCE_PASSES, 'looseBall');
       onCounter();
       return defendingTeam;
     } else {
       const currentStatsDef = defendingTeam === 'A' ? statsA : statsB;
       currentStatsDef.looseBallsWon++;
-      addPasses(defendingTeam, cfgLB.PASSES_COUNT, 'looseBall');
+      addPasses(defendingTeam, cfgG.RESOLVELOOSEBALL_DEFENSE_RECOVERED_PASSES, 'looseBall');
       return defendingTeam;
     }
   }
 
   private createEmptyTeamStats(): TeamSequenceStats {
+    const cfgG = SIM_CONFIG.GAME_SERVICE;
     return {
       goals: 0,
       totalXG: 0,
       xgPerShot: 0,
-      possessionSharePercent: 50,
+      possessionSharePercent: cfgG.CREATEEMPTYTEAMSTATS_DEFAULT_POSSESSION,
       xgByState: { openPlay: 0, counterAttack: 0, corner: 0, looseBall: 0 },
       passesByState: { openPlay: 0, counterAttack: 0, corner: 0, looseBall: 0, total: 0, maxPassSequence: 0 },
       shots: { total: 0, onTarget: 0, blocked: 0, woodwork: 0 },
@@ -341,34 +348,36 @@ export class SimGameService {
   }
 
   private finalizeTeamStats(statsA: TeamSequenceStats, statsB: TeamSequenceStats): void {
-    statsA.xgByState.openPlay = Number(statsA.xgByState.openPlay.toFixed(2));
-    statsA.xgByState.counterAttack = Number(statsA.xgByState.counterAttack.toFixed(2));
-    statsA.xgByState.corner = Number(statsA.xgByState.corner.toFixed(2));
-    statsA.xgByState.looseBall = Number(statsA.xgByState.looseBall.toFixed(2));
-    statsA.totalXG = Number(statsA.totalXG.toFixed(2));
+    const cfgG = SIM_CONFIG.GAME_SERVICE;
 
-    statsB.xgByState.openPlay = Number(statsB.xgByState.openPlay.toFixed(2));
-    statsB.xgByState.counterAttack = Number(statsB.xgByState.counterAttack.toFixed(2));
-    statsB.xgByState.corner = Number(statsB.xgByState.corner.toFixed(2));
-    statsB.xgByState.looseBall = Number(statsB.xgByState.looseBall.toFixed(2));
-    statsB.totalXG = Number(statsB.totalXG.toFixed(2));
+    statsA.xgByState.openPlay = Number(statsA.xgByState.openPlay.toFixed(cfgG.FINALIZETEAMSTATS_XG_DECIMALS));
+    statsA.xgByState.counterAttack = Number(statsA.xgByState.counterAttack.toFixed(cfgG.FINALIZETEAMSTATS_XG_DECIMALS));
+    statsA.xgByState.corner = Number(statsA.xgByState.corner.toFixed(cfgG.FINALIZETEAMSTATS_XG_DECIMALS));
+    statsA.xgByState.looseBall = Number(statsA.xgByState.looseBall.toFixed(cfgG.FINALIZETEAMSTATS_XG_DECIMALS));
+    statsA.totalXG = Number(statsA.totalXG.toFixed(cfgG.FINALIZETEAMSTATS_XG_DECIMALS));
+
+    statsB.xgByState.openPlay = Number(statsB.xgByState.openPlay.toFixed(cfgG.FINALIZETEAMSTATS_XG_DECIMALS));
+    statsB.xgByState.counterAttack = Number(statsB.xgByState.counterAttack.toFixed(cfgG.FINALIZETEAMSTATS_XG_DECIMALS));
+    statsB.xgByState.corner = Number(statsB.xgByState.corner.toFixed(cfgG.FINALIZETEAMSTATS_XG_DECIMALS));
+    statsB.xgByState.looseBall = Number(statsB.xgByState.looseBall.toFixed(cfgG.FINALIZETEAMSTATS_XG_DECIMALS));
+    statsB.totalXG = Number(statsB.totalXG.toFixed(cfgG.FINALIZETEAMSTATS_XG_DECIMALS));
 
     statsA.xgPerShot = statsA.shots.total > 0
-      ? Number((statsA.totalXG / statsA.shots.total).toFixed(3))
+      ? Number((statsA.totalXG / statsA.shots.total).toFixed(cfgG.FINALIZETEAMSTATS_XG_PER_SHOT_DECIMALS))
       : 0;
 
     statsB.xgPerShot = statsB.shots.total > 0
-      ? Number((statsB.totalXG / statsB.shots.total).toFixed(3))
+      ? Number((statsB.totalXG / statsB.shots.total).toFixed(cfgG.FINALIZETEAMSTATS_XG_PER_SHOT_DECIMALS))
       : 0;
 
     const totalPasses = statsA.passesByState.total + statsB.passesByState.total;
 
     statsA.possessionSharePercent = totalPasses > 0
-      ? Number(((statsA.passesByState.total / totalPasses) * 100).toFixed(1))
-      : 50;
+      ? Number(((statsA.passesByState.total / totalPasses) * cfgG.FINALIZETEAMSTATS_POSSESSION_MULTIPLIER).toFixed(cfgG.FINALIZETEAMSTATS_POSSESSION_DECIMALS))
+      : cfgG.FINALIZETEAMSTATS_DEFAULT_POSSESSION;
 
     statsB.possessionSharePercent = totalPasses > 0
-      ? Number(((statsB.passesByState.total / totalPasses) * 100).toFixed(1))
-      : 50;
+      ? Number(((statsB.passesByState.total / totalPasses) * cfgG.FINALIZETEAMSTATS_POSSESSION_MULTIPLIER).toFixed(cfgG.FINALIZETEAMSTATS_POSSESSION_DECIMALS))
+      : cfgG.FINALIZETEAMSTATS_DEFAULT_POSSESSION;
   }
 }
