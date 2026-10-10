@@ -103,7 +103,7 @@ export class SimAzioneService {
     const secondRoll = Math.random();
 
     if (secondRoll < chanceToBreakThrough) {
-      const generatedXG = this.calculateGeneratedXG(attackingTeam, defendingTeam, v, d);
+      const generatedXG = this.calculateGeneratedXG(attackingTeam, defendingTeam, v, d, input.currentPassSequence);
       const roundedXG = Number(generatedXG.toFixed(2));
 
       return {
@@ -154,7 +154,7 @@ export class SimAzioneService {
     const rawInput = Number(input.counterAttackRisk);
     const validRisk = this.clamp(isNaN(rawInput) ? cfgC.SIMULATECOUNTERATTACK_FALLBACK_RISK : rawInput, cfgC.SIMULATECOUNTERATTACK_MIN_RISK, cfgC.SIMULATECOUNTERATTACK_MAX_RISK);
 
-    const d_defender = this.clamp(Number(input.defendingPlaystyle?.defensiveLine), 0, 1);
+    const d_defender = this.clamp(Number(input.defendingPlaystyle?.defensiveLine ?? 0.5), 0, 1);
 
     const risk = this.clamp(validRisk * cfgC.SIMULATECOUNTERATTACK_RISK_SCALE, cfgC.SIMULATECOUNTERATTACK_MIN_RISK, cfgC.SIMULATECOUNTERATTACK_MAX_RISK);
 
@@ -315,9 +315,10 @@ export class SimAzioneService {
     return this.clamp(baseProb - verticalityPenalty + d * cfgP.CALCULATECOMPLETIONPROBABILITY_ATT_D_SCALE, cfgP.CALCULATECOMPLETIONPROBABILITY_MIN, cfgP.CALCULATECOMPLETIONPROBABILITY_MAX);
   }
 
-  private calculateGeneratedXG(att: any, def: any, v: number, d: number): number {
+  private calculateGeneratedXG(att: TeamStats, def: TeamStats, v: number, d: number, currentPassSequence: number): number {
     const cfgP = SIM_CONFIG.POSSESSION;
-    const attQual = att.attack * cfgP.CALCULATEGENERATEDXG_ATT_ATTACK_WEIGHT + att.playmaking * cfgP.CALCULATEGENERATEDXG_ATT_PLAYMAKING_WEIGHT;
+    const dynamicPlaymaking = att.getPlaymaking(currentPassSequence);
+    const attQual = att.attack * cfgP.CALCULATEGENERATEDXG_ATT_ATTACK_WEIGHT + dynamicPlaymaking * cfgP.CALCULATEGENERATEDXG_ATT_PLAYMAKING_WEIGHT;
     const defQual = def.defense * cfgP.CALCULATEGENERATEDXG_DEF_DEFENSE_WEIGHT + def.pressing * cfgP.CALCULATEGENERATEDXG_DEF_PRESSING_WEIGHT;
     const baseXG = cfgP.DEFAULT_OPEN_PLAY_XG;
 
